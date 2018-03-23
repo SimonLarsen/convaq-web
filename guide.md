@@ -1,8 +1,8 @@
-### Step-by-step guide
+## Step-by-step guide
 
 This is a step-by-step guide on how to use CoNVaQ. It will guide you through the process of performing a basic association study using the two supported models.
 
-#### Uploading files
+### Uploading files
 
 Before starting your analysis, you must upload the files containing your segmented CNV calls. First, select the species and genome reference your CNV calls were generated from. If your species is not found in the list, select `Other` instead. Some functionality will be disabled when no known species is selected. Here we select species `Homo sapiens` and reference genome `NCBI36/h18`.
 
@@ -10,7 +10,7 @@ Next you must upload the CNV calls for your two groups of samples. You can eithe
 
 Once you press **Upload data** the files are uploaded and you are taken to the analysis page. On the top of the page you will find a table summarizing the data set. In this example we observe that the HPV-positive group contains 14 samples while the HPV-negative group contains 27.
 
-#### Statistical model
+### Statistical model
 
 First we want to search for significant CNV regions using the statistical model. In order to use the statistical model we first need to select the **Statistical model** tab below the summary table.
 
@@ -22,19 +22,19 @@ In this example we observe that in the first region 21% of samples in the HPV-po
 
 If you wish to export the data in the results table you can use the three buttons above the table. The copy button copies the entire table to the clipboard. The CSV and Excel buttons allow you to save the table in CSV and Excel file formats.
 
-#### Query-based model
+### Query-based model
 
 Next we want to search for significant CNV regions using the query-based model. Select the **Query-based model** tab below the summary table to get started.
 
 We will use the following query to search for loss events:
 
-> Q = ((≥, 0.2, =, Loss), (≥, 1.0, =, Normal))
+> Q = ((≥, 20%, =, Loss), (≥, 100%, =, Normal))
 
 This query specifies, that we are searching for regions where at least 20% of samples in the HPV-positive have a loss in copy numbers and all samples in the HPV-negative group must have normal copy numbers (see the image below). See our paper for a description of how queries are defined and evaluated.
 
 Press the **Submit** button to search for regions matching this query. The results will be shown in the results table below. The results table for the query-based model contains the same information as for the statistical model, except that p-values are not computed.
 
-#### Inspecting CNV regions
+### Inspecting CNV regions
 
 You can inspect the individual reported CNV regions by clicking on the **MAGNIFYING-GLASS** next to them. This will bring up the inspection window.
 
@@ -42,7 +42,7 @@ Under **Summary** you can find the statistics for the region also presented in t
 
 In our example, if we expand the *HPV-positive* group, we can see that a loss of copy numbers was observed in patients *1389* and *PE11T*, among others.
 
-#### Enrichment analysis
+### Enrichment analysis
 
 After identifying a set of CNV regions one can perform a simple gene set enrichment analysis. In the results table, select one or more regions by clicking on them while holding the **ctrl** key. Selected regions will be highlighted with blue.
 
@@ -52,4 +52,4 @@ In the analysis window you will find a table containing all known genes overlapp
 
 In this example we select `Protein class` in order to search for overrepresented PANTHER protein classes. We find one protein class, `PC00024` with a p-value of 0.0412.
 
-### File format specification
+## File format specification

@@ -1,0 +1,74 @@
+@media (min-width: 1200px) {
+  .container {
+    width: 1000px;
+  }
+}
+
+#modelTabs {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+#modelTabs > li {
+  width: 100%;
+}
+
+.nav-pills > li > a,
+.nav-pills > li > a:focus,
+.nav-pills > li > a:hover {
+    background-color: #efefef;
+    font-size: 18px;
+}
+
+.nav-pills > li.active > a,
+.nav-pills > li.active > a:focus,
+.nav-pills > li.active > a:hover {
+    color: #fff;
+    background-color: #337ab7;
+}
+
+.progress {
+  height: 16px;
+  margin-bottom: 15px;
+}
+
+.progress .progress-bar {
+  font-size: 12px;
+  line-height: 16px;
+}
+
+#shiny-notification-panel {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  background-color: rgba(0, 0, 0, 0.9);
+  padding: 0;
+}
+
+.shiny-notification {
+  background-color: transparent;
+  color: #fff;
+  border: 0;
+  opacity: 1;
+}
+
+.shiny-progress-notification .progress {
+  height: 16px;
+}
+
+.shiny-progress-notification .progress-text .progress-message {
+  font-size: 100%;
+  display: block;
+}
+
+.shiny-progress-notification .progress-text .progress-detail {
+  font-size: 100%;
+  display: block;
+}
+
+.shiny-notification-close {
+  display: none;
+}
