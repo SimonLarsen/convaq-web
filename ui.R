@@ -1,4 +1,5 @@
 library(shiny)
+library(DT)
 library(shinyjs)
 library(shinysky)
 
@@ -96,7 +97,7 @@ shinyUI(navbarPage("CoNVaQ", inverse=TRUE, fluid=FALSE, selected="Get started", 
         ),
         hr(),
         checkboxInput("computeQvalues", tags$b("Compute q-values"), value=TRUE),
-        actionButton("submitButton", "Run analysis", styleclass="primary")
+        actionButton("submitButton", tagList("Run analysis", icon("search")), styleclass="primary")
       ),
       
       hr(),
@@ -106,9 +107,12 @@ shinyUI(navbarPage("CoNVaQ", inverse=TRUE, fluid=FALSE, selected="Get started", 
         div(class="alert alert-info", "No matching regions found.")
       ),
       conditionalPanel("output.hasResults == true",
-        dataTableOutput("resultsTable"),
-        downloadButton("downloadResultsTableCSV", "Download table (CSV)"),
-        downloadButton("downloadResultsTableExcel", "Download table (Excel)")
+        tags$ul(
+          tags$li(HTML("Click on the <i class='fa fa-search'></i> icon to show detailed information about a region.")),
+          tags$li("Select rows for analysis by clicking on the. Click again on a row to deselect it.")
+        ),
+        DTOutput("resultsTable"),
+        actionButton("analyzeRegionsButton", "Analyze selected regions", styleclass="primary")
       )
     )
   ),

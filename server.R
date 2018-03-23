@@ -1,8 +1,8 @@
 library(shiny)
+library(DT)
 library(shinyjs)
 library(data.table)
 library(rconvaq)
-library(xlsx)
 
 shinyServer(function(input, output) {
   summaryTable <- reactiveVal()
@@ -131,6 +131,44 @@ shinyServer(function(input, output) {
     })
   })
   
+  observeEvent(input$analyzeRegionsButton, {
+    if(!isTruthy(input$resultsTable_rows_selected)) {
+      alert("Please select at least one row for analysis.")
+      return()
+    }
+    print(input$resultsTable_rows_selected)
+  })
+  
+  regionModal <- function(row) {
+    results <- currentResults()
+    
+    chr <- results[row,"chr"]
+    start <- results[row,"start"]
+    end <- results[row,"end"]
+    
+    title <- sprintf("%s:%d-%d", chr, start, end)
+    infotable <- t(results[row,1:7])
+    ucsc_link <- sprintf("https://genome.ucsc.edu/cgi-bin/hgTracks?position=%s:%d-%d&db=%s", chr, start, end, currentAssembly())
+    
+    showModal(modalDialog(
+      size = "l",
+      title = title,
+      easyClose=TRUE,
+      footer = modalButton("Close"),
+      
+      renderTable(infotable, rownames=TRUE, colnames=FALSE),
+      a(href=ucsc_link, target="_blank", class="btn btn-primary", "Show in UCSC Genome Browser")
+    ))
+  }
+    
+  observeEvent(input$resultsTable_cell_clicked, {
+    event <- req(input$resultsTable_cell_clicked)
+    if(length(event) == 0) return()
+    if(event$col == 0) {
+      regionModal(event$row)
+    }
+  })
+  
   output$summary <- renderTable({
     data <- req(currentData())
     agg1 <- aggregate(end-start+1~type, data=data[[1]], FUN=sum)
@@ -154,28 +192,25 @@ shinyServer(function(input, output) {
     )
   })
   
-  output$resultsTable <- renderDataTable({
-      req(currentResults())
-    },
-    options=list(
-      scrollX=TRUE,
-      pageLength=10
+  output$resultsTable <- renderDT({
+    D <- req(currentResults())
+    export.cols <- list(columns=seq(1, ncol(D)))
+    datatable(
+      data.frame(info="<button class='btn btn-xs'><i class='fa fa-question-circle fa-2x'></i></button>", D, check.names=FALSE),
+      extensions = c("Buttons","Select"),
+      rownames = FALSE,
+      escape = FALSE,
+      options = list(
+        dom="Bfrtip",
+        buttons=list(
+          list(extend="csv",   text="Download CSV",   exportOptions=export.cols),
+          list(extend="excel", text="Download Excel", exportOptions=export.cols),
+          "selectAll",
+          "selectNone"
+        ),
+        scrollX=TRUE,
+        select=list(style="multiple")
+      )
     )
-  )
-  
-  output$downloadResultsTableCSV <- downloadHandler(
-    filename = "results.csv",
-    content = function(file) {
-      data <- currentResults()
-      write.csv(data, file=file, row.names=FALSE)
-    }
-  )
-  
-  output$downloadResultsTableExcel <- downloadHandler(
-    filename = "results.xlsx",
-    content = function(file) {
-      data <- currentResults()
-      write.xlsx(data, file=file, row.names=FALSE)
-    }
-  )
+  })
 })
