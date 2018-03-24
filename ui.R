@@ -3,6 +3,8 @@ library(DT)
 library(shinyjs)
 library(shinysky)
 
+source("get_genes.R")
+
 make_panel <- function(..., heading=NULL) {
   div(class="panel panel-default",
       if(!is.null(heading)) div(class="panel-heading", heading),

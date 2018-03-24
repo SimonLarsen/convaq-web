@@ -12,6 +12,7 @@ shinyServer(function(input, output) {
   currentResults <- reactiveVal()
   currentSpecies <- reactiveVal()
   currentAssembly <- reactiveVal()
+  currentOverlappingGenes <- reactiveVal()
   emptyResult <- reactiveVal()
   
   observeEvent(input$resetButton, {
@@ -20,6 +21,7 @@ shinyServer(function(input, output) {
     currentResults(NULL)
     currentSpecies(NULL)
     currentAssembly(NULL)
+    currentOverlappingGenes(NULL)
     emptyResult(NULL)
   })
   
@@ -90,6 +92,11 @@ shinyServer(function(input, output) {
     s1$type <- types1
     s2$type <- types2
     
+    # remove "chr" prefix from chromosomes if present
+    s1$chr <- gsub("^chr", "", s1$chr)
+    s2$chr <- gsub("^chr", "", s2$chr)
+    
+    # update reactive values
     currentData(list(s1, s2))
     currentNames(c(input$name1, input$name2))
     currentSpecies(input$species)
@@ -131,14 +138,6 @@ shinyServer(function(input, output) {
     })
   })
   
-  observeEvent(input$analyzeRegionsButton, {
-    if(!isTruthy(input$resultsTable_rows_selected)) {
-      alert("Please select at least one row for analysis.")
-      return()
-    }
-    print(input$resultsTable_rows_selected)
-  })
-  
   regionModal <- function(row) {
     results <- currentResults()
     
@@ -150,7 +149,7 @@ shinyServer(function(input, output) {
     infotable <- t(results[row,1:7])
     ucsc_link <- sprintf("https://genome.ucsc.edu/cgi-bin/hgTracks?position=%s:%d-%d&db=%s", chr, start, end, currentAssembly())
     
-    showModal(modalDialog(
+    modalDialog(
       size = "l",
       title = title,
       easyClose=TRUE,
@@ -158,16 +157,70 @@ shinyServer(function(input, output) {
       
       renderTable(infotable, rownames=TRUE, colnames=FALSE),
       a(href=ucsc_link, target="_blank", class="btn btn-primary", "Show in UCSC Genome Browser")
-    ))
+    )
   }
     
   observeEvent(input$resultsTable_cell_clicked, {
     event <- req(input$resultsTable_cell_clicked)
     if(length(event) == 0) return()
     if(event$col == 0) {
-      regionModal(event$row)
+      showModal(regionModal(event$row))
     }
   })
+  
+  analyzeModal <- function(rows) {
+    withProgress(value=0, min=0, max=1, message="Finding overlapping genes", {
+      results <- currentResults()[rows,]
+      setProgress(value=0.1, detail="Searching for genes overlapping regions")
+      genes <- get_genes(results, currentSpecies(), currentAssembly())
+      
+      currentOverlappingGenes(genes)
+      
+      setProgress(value=0.9, detail="Preparing output")
+      genes[[1]] <- sprintf('<a href="https://www.ncbi.nlm.nih.gov/gene/%s" target=_blank>%s</a>', genes[[1]], genes[[1]])
+      colnames(genes)[1] <- "Entrez ID"
+      
+      modalDialog(
+        size = "l",
+        title = "Analyze regions",
+        easyClose = TRUE,
+        footer = modalButton("Close"),
+        
+        tabsetPanel(
+          tabPanel("Overlapping genes",
+            h3("Overlapping genes"),
+            renderDT(datatable(genes, rownames=FALSE, selection="none", escape=FALSE,
+              options = list(
+                dom="Bfrtip",
+                buttons=list(
+                  list(extend="csv",   text="Download CSV"),
+                  list(extend="excel", text="Download Excel")
+                )
+              )
+            ))
+          ),
+          tabPanel("Gene set enrichment",
+            h3("Gene set enrichment"),
+            selectInput("enrichmentType", "Enrichment type", choices = c(
+              "GO Biological process" = "gobp",
+              "GO Molecular function" = "gomf",
+              "GO Cellular component" = "gocc"
+            )),
+            actionButton("enrichmentButton", "Run enrichment analysis", styleclass="primary")
+          )
+        )
+      )
+    })
+  }
+  
+  observeEvent(input$analyzeRegionsButton, {
+    if(!isTruthy(input$resultsTable_rows_selected)) {
+      alert("Please select at least one row for analysis.")
+      return()
+    }
+    showModal(analyzeModal(input$resultsTable_rows_selected))
+  })
+  
   
   output$summary <- renderTable({
     data <- req(currentData())
