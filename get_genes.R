@@ -32,7 +32,7 @@ get_genes <- function(regions, species, assembly) {
     egdb <- org.Mm.eg.db
   }
   
-  names <- mapIds(egdb, entrez, "SYMBOL", "ENTREZID")
+  names <- if(length(entrez) > 0) mapIds(egdb, entrez, "SYMBOL", "ENTREZID") else character()
   
   data.frame(
     id = entrez,
