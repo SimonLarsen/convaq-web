@@ -15,6 +15,30 @@ make_panel <- function(..., heading=NULL) {
 shinyUI(navbarPage("CoNVaQ", inverse=TRUE, fluid=FALSE, selected="Get started", theme="style.css",
   footer=column(width=12, hr(), p(sprintf("CoNVaQ version %s", APP_VERSION))),
   useShinyjs(),
+  tags$head(
+    tags$link(rel="stylesheet", href="font-awesome.min.css"),
+    tags$script('
+      function forceUpdateSelected(table) {
+        var selected = table.rows(".selected").indexes().toArray();
+        Shiny.onInputChange("resultsTable_rows_selected", selected);
+      }
+      function selectAllRows() {
+        var table = $("#resultsTable .dataTables_scrollBody table").DataTable();
+        table.rows().nodes().to$().addClass("selected");
+        forceUpdateSelected(table);
+      }
+      function deselectAllRows() {
+        var table = $("#resultsTable .dataTables_scrollBody table").DataTable();
+        table.rows(".selected").nodes().to$().removeClass("selected");
+        forceUpdateSelected(table);
+      }
+
+      $(function() {
+        $("#selectAllRowsButton").on("click", selectAllRows);
+        $("#deselectAllRowsButton").on("click", deselectAllRows);
+      });
+    ')
+  ),
   tabPanel("Home",
     div(class="page-header", h1("CoNVaQ"))
   ),
@@ -99,7 +123,7 @@ shinyUI(navbarPage("CoNVaQ", inverse=TRUE, fluid=FALSE, selected="Get started", 
         ),
         hr(),
         checkboxInput("computeQvalues", tags$b("Compute q-values"), value=TRUE),
-        actionButton("submitButton", tagList("Run analysis", icon("search")), styleclass="primary")
+        actionButton("submitButton", "Run analysis", styleclass="primary")
       ),
       
       hr(),
@@ -111,10 +135,12 @@ shinyUI(navbarPage("CoNVaQ", inverse=TRUE, fluid=FALSE, selected="Get started", 
       conditionalPanel("output.hasResults == true",
         tags$ul(
           tags$li(HTML("Click on the <i class='fa fa-search'></i> icon to show detailed information about a region.")),
-          tags$li("Select rows for analysis by clicking on the. Click again on a row to deselect it.")
+          tags$li(HTML("Select rows for analysis by clicking on them. Hold <kbd>ctrl</kbd> to select multiple rows."))
         ),
         DTOutput("resultsTable"),
-        actionButton("analyzeRegionsButton", "Analyze selected regions", styleclass="primary")
+        actionButton("analyzeRegionsButton", "Analyze selected regions", styleclass="primary"),
+        tags$button("Select all", id="selectAllRowsButton", class="btn btn-default", type="button"),
+        tags$button("Deselect all", id="deselectAllRowsButton", class="btn btn-default", type="button")
       )
     )
   ),

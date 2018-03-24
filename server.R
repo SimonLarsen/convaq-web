@@ -145,13 +145,12 @@ shinyServer(function(input, output) {
     start <- results[row,"start"]
     end <- results[row,"end"]
     
-    title <- sprintf("%s:%d-%d", chr, start, end)
     infotable <- t(results[row,1:7])
     ucsc_link <- sprintf("https://genome.ucsc.edu/cgi-bin/hgTracks?position=%s:%d-%d&db=%s", chr, start, end, currentAssembly())
     
     modalDialog(
       size = "l",
-      title = title,
+      title = "Inspect region",
       easyClose=TRUE,
       footer = modalButton("Close"),
       
@@ -193,20 +192,32 @@ shinyServer(function(input, output) {
               options = list(
                 dom="Bfrtip",
                 buttons=list(
-                  list(extend="csv",   text="Download CSV"),
-                  list(extend="excel", text="Download Excel")
+                  list(extend="csv",   text="Download CSV",   filename="genes"),
+                  list(extend="excel", text="Download Excel", filename="genes")
                 )
               )
             ))
           ),
           tabPanel("Gene set enrichment",
             h3("Gene set enrichment"),
-            selectInput("enrichmentType", "Enrichment type", choices = c(
-              "GO Biological process" = "gobp",
-              "GO Molecular function" = "gomf",
-              "GO Cellular component" = "gocc"
-            )),
-            actionButton("enrichmentButton", "Run enrichment analysis", styleclass="primary")
+            fluidRow(
+              column(width=4,
+                selectInput("enrichmentType", "Enrichment type", choices = c(
+                  "GO Biological process" = "gobp",
+                  "GO Molecular function" = "gomf",
+                  "GO Cellular component" = "gocc"
+                ))
+              ),
+              column(width=4,
+                numericInput("enrichmentPvalueCutoff", "p-value cutoff", value=0.05, min=0, max=1)
+              ),
+              column(width=4,
+                numericInput("enrichmentQvalueCutoff", "q-value cutoff", value=0.2, min=0, max=1)
+              )
+            ),
+            actionButton("enrichmentButton", "Run enrichment analysis", styleclass="primary"),
+            hr(),
+            DTOutput("enrichmentResultsTable")
           )
         )
       )
@@ -249,21 +260,20 @@ shinyServer(function(input, output) {
     D <- req(currentResults())
     export.cols <- list(columns=seq(1, ncol(D)))
     datatable(
-      data.frame(info="<button class='btn btn-xs'><i class='fa fa-question-circle fa-2x'></i></button>", D, check.names=FALSE),
-      extensions = c("Buttons","Select"),
+      data.frame(info='<button class="btn btn-default btn-xs" type="button"><i class="fa fa-search fa-2x"></i></button>', D, check.names=FALSE),
+      extensions = c("Buttons"),
       rownames = FALSE,
       escape = FALSE,
+      #style = "bootstrap",
+      selection = "multiple",
       options = list(
         dom="Bfrtip",
         buttons=list(
-          list(extend="csv",   text="Download CSV",   exportOptions=export.cols),
-          list(extend="excel", text="Download Excel", exportOptions=export.cols),
-          "selectAll",
-          "selectNone"
+          list(extend="csv",   text="Download CSV",   exportOptions=export.cols, filename="regions"),
+          list(extend="excel", text="Download Excel", exportOptions=export.cols, filename="regions")
         ),
-        scrollX=TRUE,
-        select=list(style="multiple")
+        scrollX=TRUE
       )
     )
-  })
+  }, server=FALSE)
 })
