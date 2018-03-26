@@ -1,7 +1,3 @@
-library(DOSE)
-library(clusterProfiler)
-library(ReactomePA)
-
 source("make_links.R")
 
 gene_set_enrichment_types <- function() {
@@ -16,6 +12,10 @@ gene_set_enrichment_types <- function() {
 }
 
 gene_set_enrichment <- function(genes, universe, type, pvalueCutoff, qvalueCutoff) {
+  library(DOSE)
+  library(clusterProfiler)
+  library(ReactomePA)
+
   if(type == "gobp") {
     enrichGO(genes, universe=universe, OrgDb="org.Hs.eg.db", ont="BP", pvalueCutoff=pvalueCutoff, qvalueCutoff=qvalueCutoff)
   } else if(type == "gomf") {

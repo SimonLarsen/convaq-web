@@ -2,7 +2,7 @@ library(shiny)
 library(DT)
 library(shinyjs)
 library(data.table)
-library(rconvaq)
+library(convaq)
 
 source("make_links.R")
 source("enrichment.R")
@@ -150,12 +150,13 @@ shinyServer(function(input, output) {
   
   regionModal <- function(row) {
     results <- currentResults()
+    regions <- results$regions
     
-    chr <- results[row,"chr"]
-    start <- results[row,"start"]
-    end <- results[row,"end"]
+    chr <- regions[row,"chr"]
+    start <- regions[row,"start"]
+    end <- regions[row,"end"]
     
-    infotable <- t(results[row,1:7])
+    infotable <- t(regions[row,])
     ucsc_link <- sprintf("https://genome.ucsc.edu/cgi-bin/hgTracks?position=%s:%d-%d&db=%s", chr, start, end, currentAssembly())
     
     modalDialog(
@@ -179,9 +180,9 @@ shinyServer(function(input, output) {
   
   analyzeModal <- function(rows) {
     withProgress(value=0, min=0, max=1, message="Finding overlapping genes", {
-      results <- currentResults()[rows,]
+      regions <- currentResults()$regions[rows,]
       setProgress(value=0.1, detail="Searching for genes overlapping regions")
-      genes <- get_genes(results, currentSpecies(), currentAssembly())
+      genes <- get_genes(regions, currentSpecies(), currentAssembly())
       
       currentOverlappingGenes(genes)
       
@@ -217,7 +218,14 @@ shinyServer(function(input, output) {
             ),
             actionButton("enrichmentButton", "Run enrichment analysis", styleclass="primary"),
             hr(),
-            DTOutput("enrichmentResultsTable")
+            tabsetPanel(
+              tabPanel("Table",
+                DTOutput("enrichmentResultsTable")
+              ),
+              tabPanel("Dot plot",
+                plotOutput("enrichmentDotplot")
+              )
+            )
           )
         )
       )
@@ -262,7 +270,8 @@ shinyServer(function(input, output) {
   })
   
   output$resultsTable <- renderDT({
-    D <- req(currentResults())
+    results <- req(currentResults())
+    D <- currentResults()$regions
     export.cols <- list(columns=seq(1, ncol(D)))
     datatable(
       data.frame(info='<button class="btn btn-default btn-xs" type="button"><i class="fa fa-search fa-2x"></i></button>', D, check.names=FALSE),
@@ -278,7 +287,7 @@ shinyServer(function(input, output) {
         ),
         scrollX=TRUE
       )
-    )
+    ) %>% formatSignif(c("pvalue", if(results$qvalues) "qvalue"), digits=3)
   }, server=FALSE)
   
   observeEvent(input$enrichmentButton, {
@@ -294,12 +303,16 @@ shinyServer(function(input, output) {
   
   output$enrichmentResultsTable <- renderDT({
     datatable(
-      as.data.frame(currentEnrichmentResults()),
+      as.data.frame(req(currentEnrichmentResults())),
       rownames = FALSE,
       escape = FALSE,
       options = list(
         scrollX = TRUE
       )
     )
+  })
+  
+  output$enrichmentDotplot <- renderPlot({
+    DOSE::dotplot(req(currentEnrichmentResults()))
   })
 })

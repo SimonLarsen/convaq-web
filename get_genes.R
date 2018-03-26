@@ -1,12 +1,8 @@
-library(GenomicRanges)
-library(GenomicFeatures)
-library(data.table)
-# other dependencies:
-# org.Hs.eg.db
-# org.Mm.eg.db
-# org.Rn.eg.db
-
 get_genes <- function(regions, species, assembly) {
+  library(GenomicRanges)
+  library(GenomicFeatures)
+  library(data.table)
+  
   D <- fread(sprintf("data/genes/%s.csv", assembly), header=TRUE, colClasses=c("numeric","numeric","character","character"))
   all.genes <- makeGRangesFromDataFrame(D, keep.extra.columns=TRUE)
   
