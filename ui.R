@@ -91,7 +91,8 @@ shinyUI(navbarPage("CoNVaQ", inverse=TRUE, fluid=FALSE, selected="Get started", 
       hr(),
       
       h2("Data set summary"),
-      tableOutput("summary"),
+      uiOutput("summaryText"),
+      tableOutput("summaryTable"),
       
       h2("Model"),
       div(
@@ -135,7 +136,7 @@ shinyUI(navbarPage("CoNVaQ", inverse=TRUE, fluid=FALSE, selected="Get started", 
       conditionalPanel("output.hasResults == true",
         tags$ul(
           tags$li(HTML("Click on the <i class='fa fa-search'></i> icon to show detailed information about a region.")),
-          tags$li(HTML("Select rows for analysis by clicking on them. Hold <kbd>ctrl</kbd> to select multiple rows."))
+          tags$li(HTML("Select rows for analysis by clicking on them. Click on a row again to deselect it."))
         ),
         DTOutput("resultsTable"),
         actionButton("analyzeRegionsButton", "Analyze selected regions", styleclass="primary"),

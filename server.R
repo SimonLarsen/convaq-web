@@ -4,6 +4,9 @@ library(shinyjs)
 library(data.table)
 library(rconvaq)
 
+source("make_links.R")
+source("enrichment.R")
+
 shinyServer(function(input, output) {
   summaryTable <- reactiveVal()
   
@@ -13,6 +16,7 @@ shinyServer(function(input, output) {
   currentSpecies <- reactiveVal()
   currentAssembly <- reactiveVal()
   currentOverlappingGenes <- reactiveVal()
+  currentEnrichmentResults <- reactiveVal()
   emptyResult <- reactiveVal()
   
   observeEvent(input$resetButton, {
@@ -22,6 +26,7 @@ shinyServer(function(input, output) {
     currentSpecies(NULL)
     currentAssembly(NULL)
     currentOverlappingGenes(NULL)
+    currentEnrichmentResults(NULL)
     emptyResult(NULL)
   })
   
@@ -54,7 +59,7 @@ shinyServer(function(input, output) {
         "Jul. 2007 (NCBI37/mm9)" = "mm9"
       ),
       rat = c(
-        "Jul. 2014 (RGSC 6.0/rn6)"
+        "Jul. 2014 (RGSC 6.0/rn6)" = "rn6"
       )
     )
     selectInput("assembly", "Assembly", choices = choices[[input$species]])
@@ -70,8 +75,13 @@ shinyServer(function(input, output) {
       return()
     }
     
+    # read segment files and set column names
     s1 <- fread(input$file1$datapath, header=TRUE)
     s2 <- fread(input$file2$datapath, header=TRUE)
+    if(ncol(s1) < 5) { alert("File 1 does not have 5 columns."); return() }
+    if(ncol(s2) < 5) { alert("File 2 does not have 5 columns."); return() }
+    colnames(s1) <- c("patient","chr","start","end","type")
+    colnames(s2) <- c("patient","chr","start","end","type")
     
     fix_types <- function(x, filenum) {
       x2 <- types.pretty[match(tolower(x), types)]
@@ -176,7 +186,7 @@ shinyServer(function(input, output) {
       currentOverlappingGenes(genes)
       
       setProgress(value=0.9, detail="Preparing output")
-      genes[[1]] <- sprintf('<a href="https://www.ncbi.nlm.nih.gov/gene/%s" target=_blank>%s</a>', genes[[1]], genes[[1]])
+      genes[[1]] <- make_links(genes[[1]], "ncbi_gene")
       colnames(genes)[1] <- "Entrez ID"
       
       modalDialog(
@@ -201,19 +211,9 @@ shinyServer(function(input, output) {
           tabPanel("Gene set enrichment",
             h3("Gene set enrichment"),
             fluidRow(
-              column(width=4,
-                selectInput("enrichmentType", "Enrichment type", choices = c(
-                  "GO Biological process" = "gobp",
-                  "GO Molecular function" = "gomf",
-                  "GO Cellular component" = "gocc"
-                ))
-              ),
-              column(width=4,
-                numericInput("enrichmentPvalueCutoff", "p-value cutoff", value=0.05, min=0, max=1)
-              ),
-              column(width=4,
-                numericInput("enrichmentQvalueCutoff", "q-value cutoff", value=0.2, min=0, max=1)
-              )
+              column(width=4, selectInput("enrichmentType", "Enrichment type", choices = gene_set_enrichment_types())),
+              column(width=4, numericInput("enrichmentPvalueCutoff", "p-value cutoff", value=0.05, min=0, max=1)),
+              column(width=4, numericInput("enrichmentQvalueCutoff", "q-value cutoff", value=0.2, min=0, max=1))
             ),
             actionButton("enrichmentButton", "Run enrichment analysis", styleclass="primary"),
             hr(),
@@ -229,11 +229,16 @@ shinyServer(function(input, output) {
       alert("Please select at least one row for analysis.")
       return()
     }
+    currentEnrichmentResults(NULL)
     showModal(analyzeModal(input$resultsTable_rows_selected))
   })
   
   
-  output$summary <- renderTable({
+  output$summaryText <- renderUI({
+    HTML(sprintf("<p><b>Species</b>: %s.<br><b>Assembly</b>: %s</p>", input$species, input$assembly))
+  })
+  
+  output$summaryTable <- renderTable({
     data <- req(currentData())
     agg1 <- aggregate(end-start+1~type, data=data[[1]], FUN=sum)
     agg2 <- aggregate(end-start+1~type, data=data[[2]], FUN=sum)
@@ -264,7 +269,6 @@ shinyServer(function(input, output) {
       extensions = c("Buttons"),
       rownames = FALSE,
       escape = FALSE,
-      #style = "bootstrap",
       selection = "multiple",
       options = list(
         dom="Bfrtip",
@@ -276,4 +280,26 @@ shinyServer(function(input, output) {
       )
     )
   }, server=FALSE)
+  
+  observeEvent(input$enrichmentButton, {
+    withProgress(value=0, min=0, max=1, message="Gene set enrichment", {
+      setProgress(value=0.1, detail="Preparing data")
+      genes <- currentOverlappingGenes()[[1]]
+      setProgress(value=0.2, detail="Finding enriched gene sets")
+      res <- gene_set_enrichment(genes, NULL, input$enrichmentType, input$enrichmentPvalueCutoff, input$enrichmentQvalueCutoff)
+      setProgress(value=0.9, detail="Preparing output")
+      currentEnrichmentResults(res)
+    })
+  })
+  
+  output$enrichmentResultsTable <- renderDT({
+    datatable(
+      as.data.frame(currentEnrichmentResults()),
+      rownames = FALSE,
+      escape = FALSE,
+      options = list(
+        scrollX = TRUE
+      )
+    )
+  })
 })
