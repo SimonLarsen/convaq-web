@@ -12,7 +12,7 @@ make_panel <- function(..., heading=NULL) {
   )
 }
 
-shinyUI(navbarPage("CoNVaQ", inverse=TRUE, fluid=FALSE, selected="Get started", theme="style.css",
+shinyUI(navbarPage("CoNVaQ", inverse=FALSE, fluid=FALSE, selected="Get started", theme="style.css",
   footer=column(width=12, hr(), p(sprintf("CoNVaQ version %s", APP_VERSION))),
   useShinyjs(),
   tags$head(

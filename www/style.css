@@ -13,6 +13,31 @@
   width: 100%;
 }
 
+.navbar-default {
+  border: 0;
+  background-color: white;
+  border-top: 4px solid #de7676;
+  border-bottom: 1px solid #e7e7e7;
+}
+
+.navbar-default .navbar-brand,
+.navbar-default .navbar-brand:hover,
+.navbar-default .navbar-brand:focus {
+  color: #333;
+}
+
+.navbar-default .navbar-nav > a {
+  border-bottom: 4px solid transparent;
+}
+
+.navbar-default .navbar-nav > .active > a,
+.navbar-default .navbar-nav > .active > a:focus,
+.navbar-default .navbar-nav > .active > a:hover {
+  color: #333;
+  background-color: inherit;
+  border-bottom: 4px solid #de7676;
+}
+
 .nav-pills > li > a,
 .nav-pills > li > a:focus,
 .nav-pills > li > a:hover {
