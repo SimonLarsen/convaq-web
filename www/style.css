@@ -13,6 +13,10 @@
   width: 100%;
 }
 
+.page-header {
+  margin: 20px 0 20px 0;
+}
+
 .navbar-default {
   border: 0;
   background-color: white;
