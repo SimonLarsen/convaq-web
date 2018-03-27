@@ -105,7 +105,7 @@ shinyUI(
             checkboxInput("merge", "Merge adjacent regions", value=FALSE),
             numericInput("mergeThreshold", "within threshold (base pairs)", value=0, min=0, max=Inf),
             hr(),
-            checkboxInput("computeQvalues", tags$b("Compute q-values"), value=TRUE),
+            checkboxInput("computeQvalues", tags$b("Compute q-values"), value=FALSE),
             p("Compute empirical p-values through permutation tests.", class="text-muted")
           ),
           actionButton("submitButton", "Run analysis", styleclass="primary")

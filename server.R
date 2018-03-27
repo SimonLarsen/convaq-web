@@ -124,6 +124,7 @@ shinyServer(function(input, output) {
     withProgress(min=0, max=1, value=0, message="Computing results", {
       setProgress(value=0.1, detail="Preparing data")
       data <- currentData()
+      group.names <- currentNames()
       s1 <- data[[1]]
       s2 <- data[[2]]
       
@@ -131,7 +132,7 @@ shinyServer(function(input, output) {
       if(input$modelTabs == "statistical") {
         res <- convaq(
           s1, s2, model="statistical",
-          name1=input$name1, name2=input$name2,
+          name1=group.names[1], name2=group.names[2],
           merge=input$merge, merge.threshold=input$mergeThreshold,
           p.cutoff=input$pvalueCutoff,
           qvalues=input$computeQvalues, qvalues.rep=2000
@@ -142,7 +143,7 @@ shinyServer(function(input, output) {
         pred2 <- paste(input$qcomp2, input$qvalue2/100, input$qeq2, input$qtype2)
         res <- convaq(
           s1, s2, model="query",
-          name1=input$name1, name2=input$name2,
+          name1=group.names[1], name2=group.names[2],
           merge=input$merge, merge.threshold=input$mergeThreshold,
           pred1=pred1, pred2=pred2,
           qvalues=input$computeQvalues, qvalues.rep=2000
@@ -162,7 +163,6 @@ shinyServer(function(input, output) {
     start <- regions[row,"start"]
     end <- regions[row,"end"]
     
-    infotable <- t(regions[row,])
     ucsc_link <- sprintf("https://genome.ucsc.edu/cgi-bin/hgTracks?position=%s:%d-%d&db=%s", chr, start, end, currentAssembly())
     
     freq <- frequencies(results)[row,]
@@ -172,16 +172,32 @@ shinyServer(function(input, output) {
     )
     rownames(freq) <- currentNames()
     
+    states1 <- sapply(results$state[[row]][[1]], paste0, collapse=",")
+    states2 <- sapply(results$state[[row]][[2]], paste0, collapse=",")
+    states1 <- data.frame(patient=names(states1), state=states1)
+    states2 <- data.frame(patient=names(states2), state=states2)
+    
     modalDialog(
       size = "l",
       title = "Inspect region",
       easyClose=TRUE,
       footer = modalButton("Close"),
       
-      h3("Summary"),
-      renderTable(infotable, rownames=TRUE, colnames=FALSE),
+      h4("Summary"),
+      renderTable(results$regions[row,], rownames=FALSE, colnames=TRUE),
       renderTable(freq, rownames=TRUE, colnames=TRUE),
-      h3("Genome browser"),
+      h4("Patient/sample states"),
+      fluidRow(
+        column(width=6,
+          tags$label(results$name1),
+          renderDT(datatable(states1, rownames=FALSE, options=list(scrollY="200px", searching=FALSE, paging=FALSE)))
+        ),
+        column(width=6,
+          tags$label(results$name2),
+          renderDT(datatable(states2, rownames=FALSE, options=list(scrollY="200px", searching=FALSE, paging=FALSE)))
+        )
+      ),
+      h4("Genome browser"),
       a(href=ucsc_link, target="_blank", class="btn btn-primary", "Show region in UCSC Genome Browser")
     )
   }
@@ -265,7 +281,8 @@ shinyServer(function(input, output) {
   
   output$summaryText <- renderUI({
     species.name <- names(which(species == input$species))
-    HTML(sprintf("<p><b>Species</b>: %s.<br><b>Assembly</b>: %s</p>", species.name, input$assembly))
+    assembly.name <- names(which(assembly == input$assembly))
+    HTML(sprintf("<p><b>Species</b>: %s.<br><b>Assembly</b>: %s</p>", species.name, assembly.name))
   })
   
   output$summaryTable <- renderTable({
