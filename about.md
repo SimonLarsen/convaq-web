@@ -7,13 +7,6 @@ If you want to contact us regarding CoNVaQ, please contact us in the following o
   <li><a href="mailto:&#106;&#097;&#110;&#046;&#098;&#097;&#117;&#109;&#098;&#097;&#099;&#104;&#064;&#119;&#122;&#119;&#046;&#116;&#117;&#109;&#046;&#100;&#101;">Jan Baumbach</a></li>
 </ul>
 
-
-### Citation
-
-If you use CoNVaQ in your research we kindly ask you to cite the following publication:
-
-    Citation details to be announced.
-
 ### Source code
 
 The source code for CoNVaQ as well as the web frontend is available under a GNU GPLv3 license here:

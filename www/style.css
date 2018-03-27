@@ -4,6 +4,10 @@
   }
 }
 
+.fa-1-5x {
+  font-size: 1.5em !important;
+}
+
 #modelTabs {
   display: flex;
   margin-bottom: 20px;
@@ -30,7 +34,7 @@
   color: #333;
 }
 
-.navbar-default .navbar-nav > a {
+.navbar-default .navbar-nav > li > a {
   border-bottom: 4px solid transparent;
 }
 

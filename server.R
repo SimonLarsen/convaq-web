@@ -2,14 +2,13 @@ library(shiny)
 library(DT)
 library(shinyjs)
 library(data.table)
+library(openxlsx)
 library(convaq)
 
 source("make_links.R")
 source("enrichment.R")
 
 shinyServer(function(input, output) {
-  summaryTable <- reactiveVal()
-  
   currentData <- reactiveVal()
   currentNames <- reactiveVal()
   currentResults <- reactiveVal()
@@ -46,6 +45,15 @@ shinyServer(function(input, output) {
     return(emptyResult())
   })
   outputOptions(output, "gotEmptyResult", suspendWhenHidden=FALSE)
+  
+  output$hasEnrichmentResults <- reactive({
+    req(currentEnrichmentResults())
+    return(TRUE)
+  })
+  outputOptions(output, "hasEnrichmentResults", suspendWhenHidden=FALSE)
+  
+  output$group1Name <- renderText(currentNames()[1])
+  output$group2Name <- renderText(currentNames()[2])
   
   output$assemblySelect <- renderUI({
     choices <- list(
@@ -159,14 +167,24 @@ shinyServer(function(input, output) {
     infotable <- t(regions[row,])
     ucsc_link <- sprintf("https://genome.ucsc.edu/cgi-bin/hgTracks?position=%s:%d-%d&db=%s", chr, start, end, currentAssembly())
     
+    freq <- results$freq[row,]
+    freq <- rbind(
+      setNames(freq[,1:3], types.pretty),
+      setNames(freq[,4:6], types.pretty)
+    )
+    rownames(freq) <- currentNames()
+    
     modalDialog(
       size = "l",
       title = "Inspect region",
       easyClose=TRUE,
       footer = modalButton("Close"),
       
+      h3("Summary"),
       renderTable(infotable, rownames=TRUE, colnames=FALSE),
-      a(href=ucsc_link, target="_blank", class="btn btn-primary", "Show in UCSC Genome Browser")
+      renderTable(freq, rownames=TRUE, colnames=TRUE),
+      h3("Genome browser"),
+      a(href=ucsc_link, target="_blank", class="btn btn-primary", "Show region in UCSC Genome Browser")
     )
   }
     
@@ -200,11 +218,12 @@ shinyServer(function(input, output) {
           tabPanel("Overlapping genes",
             h3("Overlapping genes"),
             renderDT(datatable(genes, rownames=FALSE, selection="none", escape=FALSE,
+              extensions = "Buttons",
               options = list(
                 dom="Bfrtip",
                 buttons=list(
                   list(extend="csv",   text="Download CSV",   filename="genes"),
-                  list(extend="excel", text="Download Excel", filename="genes")
+                  list(extend="excel", text="Download Excel", filename="genes", title=NULL)
                 )
               )
             ))
@@ -217,15 +236,19 @@ shinyServer(function(input, output) {
               column(width=4, numericInput("enrichmentQvalueCutoff", "q-value cutoff", value=0.2, min=0, max=1))
             ),
             actionButton("enrichmentButton", "Run enrichment analysis", styleclass="primary"),
-            hr(),
-            tabsetPanel(
-              tabPanel("Table",
-                DTOutput("enrichmentResultsTable")
-              ),
-              tabPanel("Dot plot",
-                plotOutput("enrichmentDotplot")
+            conditionalPanel("output.hasEnrichmentResults", {
+              tagList(
+                hr(),
+                tabsetPanel(
+                  tabPanel("Table",
+                    DTOutput("enrichmentResultsTable")
+                  ),
+                  tabPanel("Dot plot",
+                    plotOutput("enrichmentDotplot")
+                  )
+                )
               )
-            )
+            })
           )
         )
       )
@@ -274,20 +297,12 @@ shinyServer(function(input, output) {
     D <- currentResults()$regions
     export.cols <- list(columns=seq(1, ncol(D)))
     datatable(
-      data.frame(info='<button class="btn btn-default btn-xs" type="button"><i class="fa fa-search fa-2x"></i></button>', D, check.names=FALSE),
-      extensions = c("Buttons"),
+      data.frame(info='<button class="btn btn-default btn-sm" type="button"><i class="fa fa-search fa-1-5x"></i></button>', D, check.names=FALSE),
       rownames = FALSE,
       escape = FALSE,
       selection = "multiple",
-      options = list(
-        dom="Bfrtip",
-        buttons=list(
-          list(extend="csv",   text="Download CSV",   exportOptions=export.cols, filename="regions"),
-          list(extend="excel", text="Download Excel", exportOptions=export.cols, filename="regions")
-        ),
-        scrollX=TRUE
-      )
-    ) %>% formatSignif(c("pvalue", if(results$qvalues) "qvalue"), digits=3)
+      options = list(scrollX=TRUE)
+    ) %>% formatSignif(c(if(results$model == "statistical") "pvalue", if(results$qvalues) "qvalue"), digits=3)
   }, server=FALSE)
   
   observeEvent(input$enrichmentButton, {
@@ -306,13 +321,38 @@ shinyServer(function(input, output) {
       as.data.frame(req(currentEnrichmentResults())),
       rownames = FALSE,
       escape = FALSE,
+      extensions = "Buttons",
       options = list(
-        scrollX = TRUE
+        scrollX = TRUE,
+        dom="Bfrtip",
+        buttons=list(
+          list(extend="csv",   text="Download CSV",   filename="enrichment"),
+          list(extend="excel", text="Download Excel", filename="enrichment", title=NULL)
+        )
       )
-    )
+    ) %>% formatSignif(c("pvalue","p.adjust","qvalue"), digits=3)
   })
+  
+  get_full_results <- function(){
+    results <- currentResults()
+    cbind(results$regions, results$freq, states(results))
+  }
   
   output$enrichmentDotplot <- renderPlot({
     DOSE::dotplot(req(currentEnrichmentResults()))
   })
+  
+  output$downloadResultsCSV <- downloadHandler(
+    filename = "resultes.csv",
+    content = function(file) {
+      write.csv(get_full_results(), file=file, row.names=FALSE, na="")
+    }
+  )
+  
+  output$downloadResultsExcel <- downloadHandler(
+    filename = "results.xlsx",
+    content = function(file) {
+      write.xlsx(get_full_results(), file=file, row.names=FALSE, keepNA=FALSE)
+    }
+  )
 })
