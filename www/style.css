@@ -17,6 +17,19 @@
   width: 100%;
 }
 
+.toc {
+  display: table;
+}
+
+.toc > ul,
+.toc > ol {
+  margin: 0;
+}
+
+.table-nonfluid {
+  width: auto !important;
+}
+
 .page-header {
   margin: 20px 0 20px 0;
 }
