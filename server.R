@@ -56,21 +56,7 @@ shinyServer(function(input, output) {
   output$group2Name <- renderText(currentNames()[2])
   
   output$assemblySelect <- renderUI({
-    choices <- list(
-      human =  c(
-        "Dec. 2013 (GRCh38/hg38)" = "hg38",
-        "Feb. 2009 (GRCh37/hg19)" = "hg19",
-        "Mar. 2006 (NCBI36/hg18)" = "hg18"
-      ),
-      mouse = c(
-        "Dec. 2010 (GRCm38/mm10" = "mm10",
-        "Jul. 2007 (NCBI37/mm9)" = "mm9"
-      ),
-      rat = c(
-        "Jul. 2014 (RGSC 6.0/rn6)" = "rn6"
-      )
-    )
-    selectInput("assembly", "Assembly", choices = choices[[input$species]])
+    selectInput("assembly", "Assembly", choices = assemblies[[input$species]])
   })
   
   observeEvent(input$uploadButton, {
@@ -143,12 +129,24 @@ shinyServer(function(input, output) {
       
       setProgress(value=0.2, detail="Searching for matching regions")
       if(input$modelTabs == "statistical") {
-        res <- convaq(s1, s2, model="statistical", name1=input$name1, name2=input$name2, p.cutoff=input$pvalueCutoff, qvalues=input$computeQvalues, qvalues.rep=2000)
+        res <- convaq(
+          s1, s2, model="statistical",
+          name1=input$name1, name2=input$name2,
+          merge=input$merge, merge.threshold=input$mergeThreshold,
+          p.cutoff=input$pvalueCutoff,
+          qvalues=input$computeQvalues, qvalues.rep=2000
+        )
       }
       else if(input$modelTabs == "query") {
         pred1 <- paste(input$qcomp1, input$qvalue1/100, input$qeq1, input$qtype1)
         pred2 <- paste(input$qcomp2, input$qvalue2/100, input$qeq2, input$qtype2)
-        res <- convaq(s1, s2, model="query", name1=input$name1, name2=input$name2, pred1=pred1, pred2=pred2, qvalues=input$computeQvalues, qvalues.rep=2000)
+        res <- convaq(
+          s1, s2, model="query",
+          name1=input$name1, name2=input$name2,
+          merge=input$merge, merge.threshold=input$mergeThreshold,
+          pred1=pred1, pred2=pred2,
+          qvalues=input$computeQvalues, qvalues.rep=2000
+        )
       }
       setProgress(value=0.9, detail="Preparing output")
       emptyResult(is.na(res))
@@ -167,7 +165,7 @@ shinyServer(function(input, output) {
     infotable <- t(regions[row,])
     ucsc_link <- sprintf("https://genome.ucsc.edu/cgi-bin/hgTracks?position=%s:%d-%d&db=%s", chr, start, end, currentAssembly())
     
-    freq <- results$freq[row,]
+    freq <- frequencies(results)[row,]
     freq <- rbind(
       setNames(freq[,1:3], types.pretty),
       setNames(freq[,4:6], types.pretty)
@@ -266,7 +264,8 @@ shinyServer(function(input, output) {
   
   
   output$summaryText <- renderUI({
-    HTML(sprintf("<p><b>Species</b>: %s.<br><b>Assembly</b>: %s</p>", input$species, input$assembly))
+    species.name <- names(which(species == input$species))
+    HTML(sprintf("<p><b>Species</b>: %s.<br><b>Assembly</b>: %s</p>", species.name, input$assembly))
   })
   
   output$summaryTable <- renderTable({
@@ -333,14 +332,14 @@ shinyServer(function(input, output) {
     ) %>% formatSignif(c("pvalue","p.adjust","qvalue"), digits=3)
   })
   
-  get_full_results <- function(){
-    results <- currentResults()
-    cbind(results$regions, results$freq, states(results))
-  }
-  
   output$enrichmentDotplot <- renderPlot({
     DOSE::dotplot(req(currentEnrichmentResults()))
   })
+  
+  get_full_results <- function(){
+    results <- currentResults()
+    cbind(results$regions, frequencies(results), states(results))
+  }
   
   output$downloadResultsCSV <- downloadHandler(
     filename = "resultes.csv",

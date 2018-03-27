@@ -36,11 +36,7 @@ shinyUI(
         make_panel(
           fluidRow(
             column(width=6,
-              selectInput("species", "Species", choices = c(
-                "Homo sapiens" = "human",
-                "Mus musculus" = "mouse",
-                "Rattus norvegicus" = "rat"
-              ))
+              selectInput("species", "Species", choices=species)
             ),
             column(width=6,
               uiOutput("assemblySelect")
@@ -104,8 +100,14 @@ shinyUI(
               )
             )
           ),
-          checkboxInput("computeQvalues", tags$b("Compute q-values"), value=TRUE, width = "100%"),
-          p("Compute empirical p-values through permutation tests.", class="text-muted"),
+          make_panel(heading="Options",
+            p(tags$b("Merging regions")),
+            checkboxInput("merge", "Merge adjacent regions", value=FALSE),
+            numericInput("mergeThreshold", "within threshold (base pairs)", value=0, min=0, max=Inf),
+            hr(),
+            checkboxInput("computeQvalues", tags$b("Compute q-values"), value=TRUE),
+            p("Compute empirical p-values through permutation tests.", class="text-muted")
+          ),
           actionButton("submitButton", "Run analysis", styleclass="primary")
         ),
         
