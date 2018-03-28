@@ -25,3 +25,11 @@ CoNVaQ is also available as an R package. You can install the latest development
 ```
 devtools::install_github("SimonLarsen/convaq")
 ```
+
+## Citation
+
+If you use CoNVaQ in your research, we kindly ask you to cite the following publication:
+
+```
+Citation details to be announced.
+```

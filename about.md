@@ -9,7 +9,7 @@ If you want to contact us regarding CoNVaQ, please contact us in the following o
 
 ### Source code
 
-The source code for CoNVaQ as well as the web frontend is available under a GNU GPLv3 license here:
+The source code for CoNVaQ as well as the web frontend is available under an MIT license here:
 
 * [https://github.com/SimonLarsen/convaq](https://github.com/SimonLarsen/convaq)
 * [https://github.com/SimonLarsen/convaq-web](https://github.com/SimonLarsen/convaq-web)
