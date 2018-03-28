@@ -1,7 +1,6 @@
 library(shiny)
-library(DT)
 library(shinyjs)
-library(shinysky)
+library(DT)
 
 source("get_genes.R")
 
@@ -31,7 +30,7 @@ shinyUI(
            For information on how to structure the data, see the synthetic example data set and the file format specification."),
         div(class="alert alert-info",
           span("Want to try out CoNVaQ without uploading data?", style="margin-right:10px"),
-          actionButton("useExampleData", "Use example data", styleclass="primary")
+          actionButton("useExampleData", "Use example data", class="btn-primary")
         ),
         make_panel(
           fluidRow(
@@ -58,12 +57,12 @@ shinyUI(
           )
         ),
         p(class="text-muted", "Please wait for files to finish uploading before hitting Submit."),
-        actionButton("uploadButton", "Submit", styleclass="primary")
+        actionButton("uploadButton", "Submit", class="btn-primary btn-lg")
       ),
 
       conditionalPanel("output.hasData == true",
         div(class="page-header", h1("Analysis")),
-        actionButton("resetButton", "Start new analysis", styleclass="primary"),
+        actionButton("resetButton", "Start new analysis", class="btn-primary"),
         span(class="text-muted", style="margin-left: 20px", "Press here to start over with a new data set."),
         
         hr(),
@@ -108,21 +107,22 @@ shinyUI(
             checkboxInput("computeQvalues", tags$b("Compute q-values"), value=FALSE),
             p("Compute empirical p-values through permutation tests.", class="text-muted")
           ),
-          actionButton("submitButton", "Run analysis", styleclass="primary")
+          actionButton("submitButton", "Run analysis", class="btn-primary btn-lg")
         ),
         
         hr(),
         
-        h2("Results"),
         conditionalPanel("output.gotEmptyResult == true",
+          h2("Results"),
           div(class="alert alert-info", "No matching regions found.")
         ),
-        conditionalPanel("output.hasResults == true",
+        conditionalPanel("output.hasResults == true && output.gotEmptyResult != true",
+          h2("Results"),
           tags$ul(
             tags$li(HTML("Click on the <i class='fa fa-search'></i> icon to show detailed information about a region.")),
             tags$li(HTML("Select rows for analysis by clicking on them. Click on a row again to deselect it."))
           ),
-          actionButton("analyzeRegionsButton", "Analyze selected regions", styleclass="primary"),
+          actionButton("analyzeRegionsButton", "Analyze selected regions", class="btn-primary"),
           tags$button("Select all", id="selectAllRowsButton", class="btn btn-default", type="button"),
           tags$button("Deselect all", id="deselectAllRowsButton", class="btn btn-default", type="button"),
           DTOutput("resultsTable"),

@@ -2,7 +2,6 @@ library(shiny)
 library(DT)
 library(shinyjs)
 library(data.table)
-library(openxlsx)
 library(convaq)
 
 source("make_links.R")
@@ -150,7 +149,7 @@ shinyServer(function(input, output) {
         )
       }
       setProgress(value=0.9, detail="Preparing output")
-      emptyResult(is.na(res))
+      emptyResult(nrow(res$regions) == 0)
       currentResults(res)
     })
   })
@@ -367,6 +366,7 @@ shinyServer(function(input, output) {
   output$downloadResultsExcel <- downloadHandler(
     filename = "results.xlsx",
     content = function(file) {
+      library(openxlsx)
       write.xlsx(get_full_results(), file=file, row.names=FALSE, keepNA=FALSE)
     }
   )
