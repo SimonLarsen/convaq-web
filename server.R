@@ -190,11 +190,11 @@ shinyServer(function(input, output) {
       fluidRow(
         column(width=6,
           tags$label(results$name1),
-          renderDT(datatable(states1, rownames=FALSE, options=list(scrollY="200px", searching=FALSE, paging=FALSE)))
+          renderDT(datatable(states1, rownames=FALSE, options=list(scrollY="200px", searching=FALSE, paging=FALSE)), server=FALSE)
         ),
         column(width=6,
           tags$label(results$name2),
-          renderDT(datatable(states2, rownames=FALSE, options=list(scrollY="200px", searching=FALSE, paging=FALSE)))
+          renderDT(datatable(states2, rownames=FALSE, options=list(scrollY="200px", searching=FALSE, paging=FALSE)), server=FALSE)
         )
       ),
       h4("Genome browser"),
@@ -240,7 +240,7 @@ shinyServer(function(input, output) {
                   list(extend="excel", text="Download Excel", filename="genes", title=NULL)
                 )
               )
-            ))
+            ), server = FALSE)
           ),
           tabPanel("Gene set enrichment",
             h3("Gene set enrichment"),
@@ -347,7 +347,7 @@ shinyServer(function(input, output) {
         )
       )
     ) %>% formatSignif(c("pvalue","p.adjust","qvalue"), digits=3)
-  })
+  }, server=FALSE)
   
   output$enrichmentDotplot <- renderPlot({
     DOSE::dotplot(req(currentEnrichmentResults()))
