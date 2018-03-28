@@ -278,11 +278,8 @@ shinyServer(function(input, output) {
     showModal(analyzeModal(input$resultsTable_rows_selected))
   })
   
-  
   output$summaryText <- renderUI({
-    species.name <- names(which(species == input$species))
-    assembly.name <- names(which(assembly == input$assembly))
-    HTML(sprintf("<p><b>Species</b>: %s.<br><b>Assembly</b>: %s</p>", species.name, assembly.name))
+    HTML(sprintf("<p><b>Species</b>: %s.<br><b>Assembly</b>: %s</p>", currentSpeciesName(), currentAssemblyName()))
   })
   
   output$summaryTable <- renderTable({
@@ -333,8 +330,10 @@ shinyServer(function(input, output) {
   })
   
   output$enrichmentResultsTable <- renderDT({
+    D <- as.data.frame(req(currentEnrichmentResults()))
+    D <- get_gene_set_enrichment_links(D, isolate(input$enrichmentType))
     datatable(
-      as.data.frame(req(currentEnrichmentResults())),
+      D,
       rownames = FALSE,
       escape = FALSE,
       extensions = "Buttons",
@@ -371,4 +370,12 @@ shinyServer(function(input, output) {
       write.xlsx(get_full_results(), file=file, row.names=FALSE, keepNA=FALSE)
     }
   )
+  
+  currentSpeciesName <- function() {
+    names(which(species == req(currentSpecies())))
+  }
+  
+  currentAssemblyName = function() {
+    names(which(assemblies[[req(currentSpecies())]] == req(currentAssembly())))
+  }
 })
