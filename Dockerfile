@@ -14,9 +14,6 @@ RUN wget https://download3.rstudio.org/ubuntu-12.04/x86_64/shiny-server-1.5.6.87
 COPY install_depends.R install_depends.R
 RUN R -e "source('install_depends.R')"
 
-RUN pwd
-RUN pwd
-
 COPY install_convaq.R install_convaq.R
 RUN R -e "source('install_convaq.R')"
 
