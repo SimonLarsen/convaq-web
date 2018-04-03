@@ -123,9 +123,9 @@ The results of the analysis will be presented in the results table under **Resul
 
 In this example we observe that in the first region 21% of samples in the HPV-positive group have a loss of copy numbers while all samples in the HPV-negative group have normal copy numbers. We also observe that 0%-7% of samples in the HPV-positive group have a gain in copy numbers. When a frequency is represented as a range it means the region was created by merging two or more regions. The range then represents the smallest and greatest frequency within the region.
 
-<img class="img-thumbnail img-responsive" src="/images/guide/statistical_results_full.png">
+<img class="img-thumbnail img-responsive" src="/images/guide/statistical_results.png">
 
-If you wish to export the data in the results table you can use the three buttons above the table. The copy button copies the entire table to the clipboard. The CSV and Excel buttons allow you to save the table in CSV and Excel file formats.
+If you wish to export the data in the results table you can use the buttons below the table. They allow you to save the results as either a plain-text CSV file or an Excel table.
 
 <img class="img-thumbnail img-responsive" src="/images/guide/export_table.png">
 
@@ -155,32 +155,27 @@ Under **Summary** you can find the statistics for the region also presented in t
 
 In our example, if we expand the *HPV-positive* group, we can see that a loss of copy numbers was observed in patients *1389* and *PE11T*, among others.
 
-<div class="row">
-<div class="col-sm-6">
 <img class="img-thumbnail img-responsive" src="/images/guide/inspect_region2.png">
-</div>
-<div class="col-sm-6">
-<img class="img-thumbnail img-responsive" src="/images/guide/inspect_region3.png">
-</div>
-</div>
 
 <h3 id="enrichment">Enrichment analysis</h3>
 
-After identifying a set of CNV regions one can perform a simple gene set enrichment analysis. In the results table, select one or more regions by clicking on them while holding the **ctrl** key. Selected regions will be highlighted with blue.
+After identifying a set of CNV regions one can perform a simple gene set enrichment analysis. In the results table, select one or more regions by clicking on them. Selected regions will be highlighted with blue. Click on a region again to deselect it.
 
-After selecting the regions of interest click the **Analyze selected regions** button below the results table. This will bring up the analysis window.
+After selecting the regions of interest click the **Analyze selected regions** button above the results table. This will bring up the analysis window.
 
 <img class="img-thumbnail img-responsive" src="/images/guide/enrichment_select.png">
 
 In the analysis window you will find a table containing all known genes overlapping one of the previously selected regions. To perform gene set enrichment on the set of overlapping genes, select the Enrichment analysis tab on the top of the window. Under Enrichment type select the type of annotations to search for, then click Search to perform the analysis. The results will appear in a table below, showing each matching annotation, the p-value for overrepresentation and a list of matching genes.
 
-In this example we select `Protein class` in order to search for overrepresented PANTHER protein classes. We find one protein class, `PC00024` with a p-value of 0.0412.
+<img class="img-thumbnail img-responsive" src="/images/guide/enrichment_genes.png">
+
+In this example we select `Reactome pathways` in order to search for overrepresented Panther pathways. We use a p-value cutoff of 0.05 and a q-value cutoff of 0.2.
 
 <div class="row">
 <div class="col-sm-6">
-<img class="img-thumbnail img-responsive" src="/images/guide/enrichment_genes.png">
+<img class="img-thumbnail img-responsive" src="/images/guide/enrichment_results.png">
 </div>
 <div class="col-sm-6">
-<img class="img-thumbnail img-responsive" src="/images/guide/enrichment_results.png">
+<img class="img-thumbnail img-responsive" src="/images/guide/enrichment_dotplot.png">
 </div>
 </div>
