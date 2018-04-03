@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Simon J. Larsen" />
+
+<meta name="date" content="2018-04-03" />
+
+<title>CoNVaQ: A short introduction</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+</style>
+
+
+
+<link href="data:text/css;charset=utf-8,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23header%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%20code%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" rel="stylesheet" type="text/css" />
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">CoNVaQ: A short introduction</h1>
+<h4 class="author"><em>Simon J. Larsen</em></h4>
+<h4 class="date"><em>2018-04-03</em></h4>
+
+
+
+<p>This vignette is a short introduction to the CoNVaQ R package. For a more detailed description of the functions in the CoNVaQ package and their arguments, we refer to the reference manual included with the package.</p>
+<div id="input-data-format" class="section level2">
+<h2>Input data format</h2>
+<p>CoNVaQ takes as input two sets of segmented CNV calls, one for each group of patients. Each set must be a <code>data.frame</code> with the following five columns in <strong>in this order</strong>:</p>
+<ol style="list-style-type: decimal">
+<li><code>patient</code>: An identifier for the patient or sample the segment was identified in. All segments with equal patient identifiers will be considered from the same patient/sample.</li>
+<li><code>chr</code>: Chromosome the position is located in.</li>
+<li><code>start</code>: First genomic position of the segment in base pairs.</li>
+<li><code>end</code>: Last genomic position of the segment in base pairs.</li>
+<li><code>type</code>: The variant type of the segment. Must be one of “Gain”, “Loss” or “LOH”.</li>
+</ol>
+<p>You can load the included synthetic example data set like this:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">data</span>(<span class="st">&quot;example&quot;</span>, <span class="dt">package=</span><span class="st">&quot;convaq&quot;</span>)</code></pre></div>
+<p>The <code>example</code> object contains two data frames, <code>disease</code> and <code>healthy</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(example<span class="op">$</span>disease)
+<span class="co">#&gt;   patient chr     start       end type</span>
+<span class="co">#&gt; 1   CASE1  11  12611660  12902008  LOH</span>
+<span class="co">#&gt; 2   CASE1   Y  31623109  32225521  LOH</span>
+<span class="co">#&gt; 3   CASE1   8  15199931  15238875  LOH</span>
+<span class="co">#&gt; 4   CASE1   1 116507114 116697901 Loss</span>
+<span class="co">#&gt; 5   CASE1  18  33288382  34071926 Loss</span>
+<span class="co">#&gt; 6   CASE1  19  19483990  20284356 Loss</span>
+<span class="kw">head</span>(example<span class="op">$</span>healthy)
+<span class="co">#&gt;    patient chr     start       end type</span>
+<span class="co">#&gt; 1 CONTROL1   5  75230547  75596850  LOH</span>
+<span class="co">#&gt; 2 CONTROL1   5  33707135  34231788  LOH</span>
+<span class="co">#&gt; 3 CONTROL1  19   2876001   3832189 Gain</span>
+<span class="co">#&gt; 4 CONTROL1   1  13255535  13921869 Gain</span>
+<span class="co">#&gt; 5 CONTROL1  16  76410256  76461754  LOH</span>
+<span class="co">#&gt; 6 CONTROL1   2 224005750 224280031  LOH</span></code></pre></div>
+</div>
+<div id="statistical-model" class="section level2">
+<h2>Statistical model</h2>
+<p>The statistical models searches for CNV regions significantly associated to the patient stratification using Fisher’s exact test. To use the statical model, we set the <code>model</code>-argument to “statistical”. We set the <code>p.cutoff</code>-argument to 0.05 to only include regions with <span class="math inline">\(p &lt; 0.05\)</span>.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(convaq)
+results &lt;-<span class="st"> </span><span class="kw">convaq</span>(
+  example<span class="op">$</span>disease, example<span class="op">$</span>healthy,
+  <span class="dt">model =</span> <span class="st">&quot;statistical&quot;</span>,
+  <span class="dt">name1 =</span> <span class="st">&quot;Disease&quot;</span>, <span class="dt">name2=</span><span class="st">&quot;Healthy&quot;</span>,
+  <span class="dt">p.cutoff =</span> <span class="fl">0.05</span>
+)</code></pre></div>
+<p>The <code>convaq</code>-function returns a <code>convaq</code>-object. We can inspect the object by printing it:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">print</span>(results)
+<span class="co">#&gt; CoNVaQ results object.</span>
+<span class="co">#&gt; </span>
+<span class="co">#&gt; Model:                statistical </span>
+<span class="co">#&gt; Group 1 name:         Disease </span>
+<span class="co">#&gt; Group 2 name:         Healthy </span>
+<span class="co">#&gt; No. regions found:    59 </span>
+<span class="co">#&gt; Compute q-values:     FALSE </span>
+<span class="co">#&gt; Q-value repetitions:  500 </span>
+<span class="co">#&gt; P-value cutoff:       0.05</span></code></pre></div>
+<p>We see that CoNVaQ reports it found 59 statistically significant regions. Use the <code>regions</code>-method to obtain these regions.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(<span class="kw">regions</span>(results))</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">chr</th>
+<th align="right">start</th>
+<th align="right">end</th>
+<th align="right">length</th>
+<th align="left">type</th>
+<th align="right">pvalue</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">17</td>
+<td align="right">41663728</td>
+<td align="right">41759865</td>
+<td align="right">96139</td>
+<td align="left">Gain</td>
+<td align="right">9.0e-07</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="right">3022867</td>
+<td align="right">3295724</td>
+<td align="right">272859</td>
+<td align="left">Gain</td>
+<td align="right">9.0e-07</td>
+</tr>
+<tr class="odd">
+<td align="left">17</td>
+<td align="right">41654723</td>
+<td align="right">41657734</td>
+<td align="right">3013</td>
+<td align="left">Gain</td>
+<td align="right">2.5e-06</td>
+</tr>
+<tr class="even">
+<td align="left">17</td>
+<td align="right">41660383</td>
+<td align="right">41663727</td>
+<td align="right">3346</td>
+<td align="left">Gain</td>
+<td align="right">4.7e-06</td>
+</tr>
+<tr class="odd">
+<td align="left">4</td>
+<td align="right">3295725</td>
+<td align="right">3302695</td>
+<td align="right">6972</td>
+<td align="left">Gain</td>
+<td align="right">4.7e-06</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="right">3014887</td>
+<td align="right">3022866</td>
+<td align="right">7981</td>
+<td align="left">Gain</td>
+<td align="right">4.7e-06</td>
+</tr>
+</tbody>
+</table>
+<p>If we want to also compute empirical q-values we set the <code>qvalues</code>-argument to <code>TRUE</code>. Q-values are computed by repeatedly permutating the patient distributing among the two groups and determining how often we observe a more significant result. To change the number of permutations used, we can set the <code>qvalues.rep</code>-argument. A greater value will improve accuracy at the cost of higher computation time.</p>
+<p>Let’s compute q-values using 2000 repetitions:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">results2 &lt;-<span class="st"> </span><span class="kw">convaq</span>(
+  example<span class="op">$</span>disease, example<span class="op">$</span>healthy,
+  <span class="dt">model =</span> <span class="st">&quot;statistical&quot;</span>,
+  <span class="dt">name1 =</span> <span class="st">&quot;Disease&quot;</span>, <span class="dt">name2=</span><span class="st">&quot;Healthy&quot;</span>,
+  <span class="dt">p.cutoff =</span> <span class="fl">0.05</span>,
+  <span class="dt">qvalues =</span> <span class="ot">TRUE</span>,
+  <span class="dt">qvalues.rep =</span> <span class="dv">2000</span>
+)
+<span class="kw">head</span>(<span class="kw">regions</span>(results2))</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">chr</th>
+<th align="right">start</th>
+<th align="right">end</th>
+<th align="right">length</th>
+<th align="left">type</th>
+<th align="left">pvalue</th>
+<th align="left">qvalue</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">4</td>
+<td align="right">3022867</td>
+<td align="right">3295724</td>
+<td align="right">272859</td>
+<td align="left">Gain</td>
+<td align="left">9.3e-07</td>
+<td align="left">0</td>
+</tr>
+<tr class="even">
+<td align="left">20</td>
+<td align="right">10064997</td>
+<td align="right">10272582</td>
+<td align="right">207587</td>
+<td align="left">Gain</td>
+<td align="left">0.0433</td>
+<td align="left">0.509</td>
+</tr>
+<tr class="odd">
+<td align="left">17</td>
+<td align="right">41663728</td>
+<td align="right">41759865</td>
+<td align="right">96139</td>
+<td align="left">Gain</td>
+<td align="left">9.3e-07</td>
+<td align="left">0.624</td>
+</tr>
+<tr class="even">
+<td align="left">Y</td>
+<td align="right">29216184</td>
+<td align="right">29279783</td>
+<td align="right">63601</td>
+<td align="left">Gain</td>
+<td align="left">0.0433</td>
+<td align="left">0.716</td>
+</tr>
+<tr class="odd">
+<td align="left">20</td>
+<td align="right">9971176</td>
+<td align="right">10064996</td>
+<td align="right">93822</td>
+<td align="left">Gain</td>
+<td align="left">0.0433</td>
+<td align="left">0.716</td>
+</tr>
+<tr class="even">
+<td align="left">20</td>
+<td align="right">10284667</td>
+<td align="right">10346809</td>
+<td align="right">62144</td>
+<td align="left">Gain</td>
+<td align="left">0.0433</td>
+<td align="left">0.766</td>
+</tr>
+</tbody>
+</table>
+<p>If q-values are computed, the output will be sorted on that instead of p-value.</p>
+</div>
+<div id="query-model" class="section level2">
+<h2>Query model</h2>
+<p>The query model searches for CNV regions matching a user-defined query. A query is defined by two predicates, one for each group of samples.</p>
+<p>A predicate takes the following form:</p>
+<blockquote>
+<p>[COMP] [FREQ] [EQ] [TYPE]</p>
+</blockquote>
+<p>where:</p>
+<ul>
+<li><code>COMP</code> is a comparison operator. One of “&lt;” (less than), “&gt;” (greater than), “&lt;=” (less than or equal to) or “&gt;=” (greater than or equal to).</li>
+<li><code>FREQ</code> is a numerical value between 0 and 1.</li>
+<li><code>EQ</code> is either “==” (equal to) or “!=” (not equal to).</li>
+<li><code>TYPE</code> is a segment type. One of “Gain”, “Loss”, “LOH” or “Normal”.</li>
+</ul>
+<p>A predicate is given as a string, with each argument separated by a single space. For instance, if we want to find regions where at least 50% of patients in a group are reported as “Gain”, we use the predicate:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="st">&quot;&gt;= 0.5 == Gain&quot;</span></code></pre></div>
+<p>Likewise if we are searching for regions where less than 25% of patients in a group have any kind of variation, we can use the predicate:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="st">&quot;&lt; 0.25 != Normal&quot;</span></code></pre></div>
+<p>To use the query model we need to set the <code>model</code>-argument to “query” and specify the two predicates using the arguments <code>pred1</code> and <code>pred2</code>. Let us use the query model to search for regions where at least 50% of patients in the disease group have a gain in copy numbers, while at most 15% of patients in the healthy group do:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">results3 &lt;-<span class="st"> </span><span class="kw">convaq</span>(
+  example<span class="op">$</span>disease, example<span class="op">$</span>healthy,
+  <span class="dt">model =</span> <span class="st">&quot;query&quot;</span>,
+  <span class="dt">name1 =</span> <span class="st">&quot;Disease&quot;</span>, <span class="dt">name2 =</span> <span class="st">&quot;Healthy&quot;</span>,
+  <span class="dt">pred1 =</span> <span class="st">&quot;&gt;= 0.5 == Gain&quot;</span>,
+  <span class="dt">pred2 =</span> <span class="st">&quot;&lt;= 0.15 == Gain&quot;</span>,
+  <span class="dt">qvalues =</span> <span class="ot">TRUE</span>, <span class="dt">qvalues.rep =</span> <span class="dv">2000</span>
+)
+<span class="kw">head</span>(<span class="kw">regions</span>(results3))</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">chr</th>
+<th align="right">start</th>
+<th align="right">end</th>
+<th align="right">length</th>
+<th align="right">qvalue</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">4</td>
+<td align="right">3022867</td>
+<td align="right">3295724</td>
+<td align="right">272859</td>
+<td align="right">0.0000</td>
+</tr>
+<tr class="even">
+<td align="left">17</td>
+<td align="right">41663728</td>
+<td align="right">41759865</td>
+<td align="right">96139</td>
+<td align="right">0.0215</td>
+</tr>
+<tr class="odd">
+<td align="left">17</td>
+<td align="right">41759866</td>
+<td align="right">41784968</td>
+<td align="right">25104</td>
+<td align="right">0.0335</td>
+</tr>
+<tr class="even">
+<td align="left">17</td>
+<td align="right">41808670</td>
+<td align="right">41823875</td>
+<td align="right">15207</td>
+<td align="right">0.0335</td>
+</tr>
+<tr class="odd">
+<td align="left">4</td>
+<td align="right">3327671</td>
+<td align="right">3339107</td>
+<td align="right">11438</td>
+<td align="right">0.0465</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="right">3316544</td>
+<td align="right">3327670</td>
+<td align="right">11128</td>
+<td align="right">0.3575</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="accessing-variation-frequencies" class="section level2">
+<h2>Accessing variation frequencies</h2>
+<p>We can access the frequencies of each type of variation in the reported regions using the <code>frequencies</code>-method:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(<span class="kw">frequencies</span>(results))</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">Disease: Gain</th>
+<th align="left">Disease: Loss</th>
+<th align="left">Disease: LOH</th>
+<th align="left">Healthy: Gain</th>
+<th align="left">Healthy: Loss</th>
+<th align="left">Healthy: LOH</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">85 %</td>
+<td align="left">0 %</td>
+<td align="left">0 %</td>
+<td align="left">9.09 %</td>
+<td align="left">0 %</td>
+<td align="left">0 %</td>
+</tr>
+<tr class="even">
+<td align="left">85 %</td>
+<td align="left">0 %</td>
+<td align="left">0 %</td>
+<td align="left">9.09 %</td>
+<td align="left">0 %</td>
+<td align="left">0 %</td>
+</tr>
+<tr class="odd">
+<td align="left">75 %</td>
+<td align="left">0 %</td>
+<td align="left">0 %</td>
+<td align="left">4.55 %</td>
+<td align="left">0 %</td>
+<td align="left">0 %</td>
+</tr>
+<tr class="even">
+<td align="left">80 %</td>
+<td align="left">0 %</td>
+<td align="left">0 %</td>
+<td align="left">9.09 %</td>
+<td align="left">0 %</td>
+<td align="left">0 %</td>
+</tr>
+<tr class="odd">
+<td align="left">80 %</td>
+<td align="left">0 %</td>
+<td align="left">0 %</td>
+<td align="left">9.09 %</td>
+<td align="left">0 %</td>
+<td align="left">0 %</td>
+</tr>
+<tr class="even">
+<td align="left">80 %</td>
+<td align="left">0 %</td>
+<td align="left">0 %</td>
+<td align="left">9.09 %</td>
+<td align="left">0 %</td>
+<td align="left">0 %</td>
+</tr>
+</tbody>
+</table>
+<p>Each row corresponds to the same row in the table returned by the <code>regions</code>-method. To get a better overview, we can combine the two tables with <code>cbind</code>:</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cbind</span>(
+  <span class="kw">head</span>(<span class="kw">regions</span>(results)[,<span class="kw">c</span>(<span class="st">&quot;chr&quot;</span>,<span class="st">&quot;start&quot;</span>,<span class="st">&quot;end&quot;</span>,<span class="st">&quot;pvalue&quot;</span>)]),
+  <span class="kw">head</span>(<span class="kw">frequencies</span>(results)[,<span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">4</span>)])
+)</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">chr</th>
+<th align="right">start</th>
+<th align="right">end</th>
+<th align="right">pvalue</th>
+<th align="left">Disease: Gain</th>
+<th align="left">Healthy: Gain</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">17</td>
+<td align="right">41663728</td>
+<td align="right">41759865</td>
+<td align="right">9.0e-07</td>
+<td align="left">85 %</td>
+<td align="left">9.09 %</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="right">3022867</td>
+<td align="right">3295724</td>
+<td align="right">9.0e-07</td>
+<td align="left">85 %</td>
+<td align="left">9.09 %</td>
+</tr>
+<tr class="odd">
+<td align="left">17</td>
+<td align="right">41654723</td>
+<td align="right">41657734</td>
+<td align="right">2.5e-06</td>
+<td align="left">75 %</td>
+<td align="left">4.55 %</td>
+</tr>
+<tr class="even">
+<td align="left">17</td>
+<td align="right">41660383</td>
+<td align="right">41663727</td>
+<td align="right">4.7e-06</td>
+<td align="left">80 %</td>
+<td align="left">9.09 %</td>
+</tr>
+<tr class="odd">
+<td align="left">4</td>
+<td align="right">3295725</td>
+<td align="right">3302695</td>
+<td align="right">4.7e-06</td>
+<td align="left">80 %</td>
+<td align="left">9.09 %</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="right">3014887</td>
+<td align="right">3022866</td>
+<td align="right">4.7e-06</td>
+<td align="left">80 %</td>
+<td align="left">9.09 %</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div id="accessing-individual-sample-states" class="section level2">
+<h2>Accessing individual sample states</h2>
+<p>We can access the states of the individual samples in the reported regions using the <code>states</code>-method.</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">head</span>(<span class="kw">states</span>(results)[,<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>,<span class="dv">21</span><span class="op">:</span><span class="dv">23</span>)])</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">CASE1</th>
+<th align="left">CASE10</th>
+<th align="left">CASE11</th>
+<th align="left">CONTROL1</th>
+<th align="left">CONTROL10</th>
+<th align="left">CONTROL11</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">Normal</td>
+<td align="left">Gain</td>
+<td align="left">Gain</td>
+<td align="left">Normal</td>
+<td align="left">Gain</td>
+<td align="left">Normal</td>
+</tr>
+<tr class="even">
+<td align="left">Normal</td>
+<td align="left">Gain</td>
+<td align="left">Gain</td>
+<td align="left">Normal</td>
+<td align="left">Normal</td>
+<td align="left">Normal</td>
+</tr>
+<tr class="odd">
+<td align="left">Normal</td>
+<td align="left">Gain</td>
+<td align="left">Gain</td>
+<td align="left">Normal</td>
+<td align="left">Normal</td>
+<td align="left">Normal</td>
+</tr>
+<tr class="even">
+<td align="left">Normal</td>
+<td align="left">Gain</td>
+<td align="left">Gain</td>
+<td align="left">Normal</td>
+<td align="left">Gain</td>
+<td align="left">Normal</td>
+</tr>
+<tr class="odd">
+<td align="left">Normal</td>
+<td align="left">Gain</td>
+<td align="left">Gain</td>
+<td align="left">Normal</td>
+<td align="left">Normal</td>
+<td align="left">Normal</td>
+</tr>
+<tr class="even">
+<td align="left">Normal</td>
+<td align="left">Gain</td>
+<td align="left">Gain</td>
+<td align="left">Normal</td>
+<td align="left">Normal</td>
+<td align="left">Normal</td>
+</tr>
+</tbody>
+</table>
+<p>Each row corresponds to the same row in the table returned by the <code>regions</code>-method. To get a better overview, we can combine the two tables with <code>cbind</code>: (only six samples shown here)</p>
+<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">cbind</span>(
+  <span class="kw">head</span>(<span class="kw">regions</span>(results)[,<span class="kw">c</span>(<span class="st">&quot;chr&quot;</span>,<span class="st">&quot;start&quot;</span>,<span class="st">&quot;end&quot;</span>,<span class="st">&quot;pvalue&quot;</span>)]),
+  <span class="kw">head</span>(<span class="kw">states</span>(results)[,<span class="kw">c</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">3</span>,<span class="dv">21</span><span class="op">:</span><span class="dv">23</span>)])
+)</code></pre></div>
+<table>
+<thead>
+<tr class="header">
+<th align="left">chr</th>
+<th align="right">start</th>
+<th align="right">end</th>
+<th align="right">pvalue</th>
+<th align="left">CASE1</th>
+<th align="left">CASE10</th>
+<th align="left">CASE11</th>
+<th align="left">CONTROL1</th>
+<th align="left">CONTROL10</th>
+<th align="left">CONTROL11</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left">17</td>
+<td align="right">41663728</td>
+<td align="right">41759865</td>
+<td align="right">9.0e-07</td>
+<td align="left">Normal</td>
+<td align="left">Gain</td>
+<td align="left">Gain</td>
+<td align="left">Normal</td>
+<td align="left">Gain</td>
+<td align="left">Normal</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="right">3022867</td>
+<td align="right">3295724</td>
+<td align="right">9.0e-07</td>
+<td align="left">Normal</td>
+<td align="left">Gain</td>
+<td align="left">Gain</td>
+<td align="left">Normal</td>
+<td align="left">Normal</td>
+<td align="left">Normal</td>
+</tr>
+<tr class="odd">
+<td align="left">17</td>
+<td align="right">41654723</td>
+<td align="right">41657734</td>
+<td align="right">2.5e-06</td>
+<td align="left">Normal</td>
+<td align="left">Gain</td>
+<td align="left">Gain</td>
+<td align="left">Normal</td>
+<td align="left">Normal</td>
+<td align="left">Normal</td>
+</tr>
+<tr class="even">
+<td align="left">17</td>
+<td align="right">41660383</td>
+<td align="right">41663727</td>
+<td align="right">4.7e-06</td>
+<td align="left">Normal</td>
+<td align="left">Gain</td>
+<td align="left">Gain</td>
+<td align="left">Normal</td>
+<td align="left">Gain</td>
+<td align="left">Normal</td>
+</tr>
+<tr class="odd">
+<td align="left">4</td>
+<td align="right">3295725</td>
+<td align="right">3302695</td>
+<td align="right">4.7e-06</td>
+<td align="left">Normal</td>
+<td align="left">Gain</td>
+<td align="left">Gain</td>
+<td align="left">Normal</td>
+<td align="left">Normal</td>
+<td align="left">Normal</td>
+</tr>
+<tr class="even">
+<td align="left">4</td>
+<td align="right">3014887</td>
+<td align="right">3022866</td>
+<td align="right">4.7e-06</td>
+<td align="left">Normal</td>
+<td align="left">Gain</td>
+<td align="left">Gain</td>
+<td align="left">Normal</td>
+<td align="left">Normal</td>
+<td align="left">Normal</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

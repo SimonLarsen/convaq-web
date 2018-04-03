@@ -18,6 +18,13 @@
 </div>
 </div>
 
+<div class="row">
+<div class="col-sm-3 col-xs-6"><a href="images/screen1.png" target="_blank" class="thumbnail"><img src="images/screen1_thumb.png" class="img-responsive"></a></div>
+<div class="col-sm-3 col-xs-6"><a href="images/screen2.png" target="_blank" class="thumbnail"><img src="images/screen2_thumb.png" class="img-responsive"></a></div>
+<div class="col-sm-3 col-xs-6"><a href="images/screen3.png" target="_blank" class="thumbnail"><img src="images/screen3_thumb.png" class="img-responsive"></a></div>
+<div class="col-sm-3 col-xs-6"><a href="images/screen4.png" target="_blank" class="thumbnail"><img src="images/screen4_thumb.png" class="img-responsive"></a></div>
+</div>
+
 ## R package
 
 CoNVaQ is also available as an R package. You can install the latest development version using devtools with:
@@ -25,6 +32,8 @@ CoNVaQ is also available as an R package. You can install the latest development
 ```
 devtools::install_github("SimonLarsen/convaq")
 ```
+
+For a quick introduction on how to use the R package we refer to <a href="vignettes/introduction.html" target="_blank">this vignette</a>.
 
 ## Citation
 
