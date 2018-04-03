@@ -1,0 +1,11 @@
+install.packages(c('devtools','shiny', 'shinyjs', 'data.table', 'DT', 'openxlsx'))
+
+source('https://bioconductor.org/biocLite.R')
+biocLite('GenomicRanges', ask=FALSE)
+biocLite('GenomicFeatures', ask=FALSE)
+biocLite('org.Hs.eg.db', ask=FALSE)
+biocLite('org.Mm.eg.db', ask=FALSE)
+biocLite('org.Rn.eg.db', ask=FALSE)
+biocLite('DOSE', ask=FALSE)
+biocLite('clusterProfiler', ask=FALSE)
+biocLite("ReactomePA", ask=FALSE)
