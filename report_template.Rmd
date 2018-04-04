@@ -1,0 +1,31 @@
+---
+title: "CoNVaQ results report"
+date: "`r format(Sys.time(), '%d %B, %Y')`"
+output: pdf_document
+params:
+  info: list()
+  summary_table: data.frame()
+  regions: data.frame()
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Data set summary
+
+```{r echo=FALSE, results="asis"}
+for(i in 1:length(params$info)) {
+  cat(sprintf("* **%s**: %s\n", names(params$info)[i], params$info[i]))
+}
+```
+
+```{r echo=FALSE}
+knitr::kable(params$summary_table, row.names=FALSE)
+```
+
+# Results
+
+```{r echo=FALSE}
+knitr::kable(params$regions, row.names=FALSE)
+```

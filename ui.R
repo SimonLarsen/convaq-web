@@ -130,7 +130,8 @@ shinyUI(
           h3("Export results"),
           p("Download all regions, including variant frequencies and individual patient states:"),
           downloadButton("downloadResultsCSV", "Download as CSV", class="btn-primary"),
-          downloadButton("downloadResultsExcel", "Downloads as Excel", class="btn-primary")
+          downloadButton("downloadResultsExcel", "Downloads as Excel", class="btn-primary"),
+          downloadButton("downloadResultsPDF", "Download PDF report", class="btn-primary")
         )
       )
     ),

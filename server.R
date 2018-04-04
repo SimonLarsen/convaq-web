@@ -6,9 +6,11 @@ library(convaq)
 
 source("make_links.R")
 source("enrichment.R")
+source("generate_report.R")
 
 shinyServer(function(input, output) {
   currentData <- reactiveVal()
+  currentFilenames <- reactiveVal()
   currentNames <- reactiveVal()
   currentResults <- reactiveVal()
   currentSpecies <- reactiveVal()
@@ -19,6 +21,7 @@ shinyServer(function(input, output) {
   
   observeEvent(input$resetButton, {
     currentData(NULL)
+    currentFilenames(NULL)
     currentNames(NULL)
     currentResults(NULL)
     currentSpecies(NULL)
@@ -101,6 +104,7 @@ shinyServer(function(input, output) {
     
     # update reactive values
     currentData(list(s1, s2))
+    currentFilenames(c(input$file1$name, input$file2$name))
     currentNames(c(input$name1, input$name2))
     currentSpecies(input$species)
     currentAssembly(input$assembly)
@@ -114,6 +118,7 @@ shinyServer(function(input, output) {
     types <- tolower(c("Gain","Loss","LOH"))
     
     currentData(list(s1, s2))
+    currentFilenames(c("disease.csv","healthy.csv"))
     currentNames(c("Disease","Healthy"))
     currentSpecies("human")
     currentAssembly("hg38")
@@ -278,10 +283,10 @@ shinyServer(function(input, output) {
   })
   
   output$summaryText <- renderUI({
-    HTML(sprintf("<p><b>Species</b>: %s.<br><b>Assembly</b>: %s</p>", currentSpeciesName(), currentAssemblyName()))
+    HTML(sprintf("<p><b>Species</b>: %s<br><b>Assembly</b>: %s<br><b>Files</b>: %s</p>", currentSpeciesName(), currentAssemblyName(), paste0(currentFilenames(), collapse=", ")))
   })
   
-  output$summaryTable <- renderTable({
+  summaryTable <- reactive({
     data <- req(currentData())
     agg1 <- aggregate(end-start+1~type, data=data[[1]], FUN=sum)
     agg2 <- aggregate(end-start+1~type, data=data[[2]], FUN=sum)
@@ -304,12 +309,12 @@ shinyServer(function(input, output) {
     )
   })
   
+  output$summaryTable <- renderTable(summaryTable())
+  
   output$resultsTable <- renderDT({
     results <- req(currentResults())
-    D <- currentResults()$regions
-    export.cols <- list(columns=seq(1, ncol(D)))
     datatable(
-      data.frame(info='<button class="btn btn-default btn-sm" type="button"><i class="fa fa-search fa-1-5x"></i></button>', D, check.names=FALSE),
+      data.frame(info='<button class="btn btn-default btn-sm" type="button"><i class="fa fa-search fa-1-5x"></i></button>', regions(results), check.names=FALSE),
       rownames = FALSE,
       escape = FALSE,
       selection = "multiple",
@@ -368,6 +373,13 @@ shinyServer(function(input, output) {
     content = function(file) {
       library(openxlsx)
       write.xlsx(get_full_results(), file=file, row.names=FALSE, keepNA=FALSE)
+    }
+  )
+  
+  output$downloadResultsPDF <- downloadHandler(
+    filename = "report.pdf",
+    content = function(file) {
+      generate_report(currentSpeciesName(), currentAssemblyName(), currentFilenames(), summaryTable(), currentResults(), file)
     }
   )
   
