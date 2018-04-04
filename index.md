@@ -33,7 +33,12 @@ CoNVaQ is also available as an R package. You can install the latest development
 devtools::install_github("SimonLarsen/convaq")
 ```
 
-For a quick introduction on how to use the R package we refer to <a href="vignettes/introduction.html" target="_blank">this vignette</a>.
+Package documentation:
+
+<ul>
+<li>Vignette: <a href="vignettes/introduction.html" target="_blank">Short introduction<a/></li>
+<li><a href="vignettes/convaq-manual.pdf", target="_blank">Reference manual</a></li>
+</ul>
 
 ## Citation
 
