@@ -262,7 +262,8 @@ shinyServer(function(input, output) {
                     DTOutput("enrichmentResultsTable")
                   ),
                   tabPanel("Dot plot",
-                    plotOutput("enrichmentDotplot")
+                    plotOutput("enrichmentDotplot"),
+                    p(class="text-muted text-center", "Only the top 20 most significant results will be shown.")
                   )
                 )
               )
@@ -354,7 +355,7 @@ shinyServer(function(input, output) {
   }, server=FALSE)
   
   output$enrichmentDotplot <- renderPlot({
-    DOSE::dotplot(req(currentEnrichmentResults()))
+    DOSE::dotplot(req(currentEnrichmentResults()), showCategory=20)
   })
   
   get_full_results <- function(){
