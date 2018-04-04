@@ -27,9 +27,9 @@ get_genes <- function(regions, species, assembly) {
   
   names <- if(length(entrez) > 0) mapIds(egdb, entrez, "SYMBOL", "ENTREZID") else character()
   
-  data.frame(
+  unique(data.frame(
     id = entrez,
     name = names,
     chr = seqnames(found.genes)
-  )
+  ))
 }
