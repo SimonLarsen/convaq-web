@@ -3,7 +3,7 @@ MAINTAINER Simon J. Larsen "simonhffh@gmail.com"
 
 EXPOSE 3838
 
-RUN apt-get update && apt-get install -y gdebi-core libssl-dev libxml2-dev libcurl4-gnutls-dev libnlopt-dev libnlopt0 libmariadb-dev
+RUN apt-get update && apt-get install -y gdebi-core libssl-dev libxml2-dev libcurl4-gnutls-dev libnlopt-dev libnlopt0 texlive texlive-latex-extra libmariadb-dev
 
 RUN R -e "install.packages(c('shiny','rmarkdown'), repos='https://cran.rstudio.com/')"
 

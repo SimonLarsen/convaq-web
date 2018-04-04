@@ -32,5 +32,5 @@ generate_report <- function(species, assembly, filenames, summary_table, results
     summary_table=summary_table,
     regions=regions
   )
-  rmarkdown::render("data/report_template.Rmd", params=myparams, output_format="pdf_document", output_file=outfile)
+  rmarkdown::render("data/report_template.Rmd", params=myparams, output_format="pdf_document", output_file=outfile, intermediates_dir=tempdir())
 }
