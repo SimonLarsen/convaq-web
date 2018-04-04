@@ -19,7 +19,7 @@ assemblies <- list(
     "Mar. 2006 (NCBI36/hg18)" = "hg18"
   ),
   mouse = c(
-    "Dec. 2010 (GRCm38/mm10" = "mm10",
+    "Dec. 2010 (GRCm38/mm10)" = "mm10",
     "Jul. 2007 (NCBI37/mm9)" = "mm9"
   ),
   rat = c(

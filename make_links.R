@@ -10,6 +10,7 @@ make_links <- function(ids, type) {
     pubchem_sid = "https://pubchem.ncbi.nlm.nih.gov/substance/%s",
     mirtarbase = "http://mirtarbase.mbc.nctu.edu.tw/php/detail.php?mirtid=%s",
     pubmed = "https://www.ncbi.nlm.nih.gov/pubmed/?term=%s",
+    kegg_pathway = "http://www.genome.jp/dbget-bin/www_bget?%s",
     kegg_drug = "http://www.genome.jp/dbget-bin/www_bget?%s"
   )
   fmt <- sprintf("<a href=\"%s\" target=_blank>%%s</a>", link)

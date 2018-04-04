@@ -249,9 +249,9 @@ shinyServer(function(input, output) {
           tabPanel("Gene set enrichment",
             h3("Gene set enrichment"),
             fluidRow(
-              column(width=4, selectInput("enrichmentType", "Enrichment type", choices = gene_set_enrichment_types())),
-              column(width=4, numericInput("enrichmentPvalueCutoff", "p-value cutoff", value=0.05, min=0, max=1)),
-              column(width=4, numericInput("enrichmentQvalueCutoff", "q-value cutoff", value=0.2, min=0, max=1))
+              column(width=4, selectInput("enrichmentType", "Enrichment type", choices = gene_set_enrichment_types(currentSpecies()))),
+              column(width=4, numericInput("enrichmentPvalueCutoff", "p-value cutoff", value=0.05, min=0, step=0.01, max=1)),
+              column(width=4, numericInput("enrichmentQvalueCutoff", "q-value cutoff", value=0.2, min=0, step=0.01, max=1))
             ),
             actionButton("enrichmentButton", "Run enrichment analysis", styleclass="primary"),
             conditionalPanel("output.hasEnrichmentResults", {
@@ -327,7 +327,7 @@ shinyServer(function(input, output) {
       setProgress(value=0.1, detail="Preparing data")
       genes <- currentOverlappingGenes()[[1]]
       setProgress(value=0.2, detail="Finding enriched gene sets")
-      res <- gene_set_enrichment(genes, NULL, input$enrichmentType, input$enrichmentPvalueCutoff, input$enrichmentQvalueCutoff)
+      res <- gene_set_enrichment(genes, currentSpecies(), input$enrichmentType, input$enrichmentPvalueCutoff, input$enrichmentQvalueCutoff)
       setProgress(value=0.9, detail="Preparing output")
       currentEnrichmentResults(res)
     })
@@ -338,6 +338,7 @@ shinyServer(function(input, output) {
     D <- get_gene_set_enrichment_links(D, isolate(input$enrichmentType))
     datatable(
       D,
+      selection = "none",
       rownames = FALSE,
       escape = FALSE,
       extensions = "Buttons",
