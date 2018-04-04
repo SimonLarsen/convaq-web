@@ -8,6 +8,16 @@ source("make_links.R")
 source("enrichment.R")
 source("generate_report.R")
 
+read_data <- function(path) {
+  lpath <- tolower(path)
+  if(endsWith(lpath, ".xlsx")) {
+    library(openxlsx)
+    data.table(read.xlsx(path, colNames=TRUE, rowNames=FALSE, detectDates=FALSE, check.names=FALSE))
+  } else {
+    fread(path, header=TRUE)
+  }
+}
+
 shinyServer(function(input, output) {
   currentData <- reactiveVal()
   currentFilenames <- reactiveVal()
@@ -72,8 +82,8 @@ shinyServer(function(input, output) {
     }
     
     # read segment files and set column names
-    s1 <- fread(input$file1$datapath, header=TRUE)
-    s2 <- fread(input$file2$datapath, header=TRUE)
+    s1 <- read_data(input$file1$datapath)
+    s2 <- read_data(input$file2$datapath)
     if(ncol(s1) < 5) { alert("File 1 does not have 5 columns."); return() }
     if(ncol(s2) < 5) { alert("File 2 does not have 5 columns."); return() }
     colnames(s1) <- c("patient","chr","start","end","type")
