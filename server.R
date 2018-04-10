@@ -374,7 +374,7 @@ shinyServer(function(input, output) {
   }
   
   output$downloadResultsCSV <- downloadHandler(
-    filename = "resultes.csv",
+    filename = "results.csv",
     content = function(file) {
       write.csv(get_full_results(), file=file, row.names=FALSE, na="")
     }
