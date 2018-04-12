@@ -6,6 +6,7 @@ generate_report <- function(species, assembly, filenames, summary_table, results
   )
   
   regions <- regions(results)
+  frequencies <- frequencies(results)
   
   if(results$model == "statistical") {
     info[["Model"]] <- "Statistical"
@@ -30,7 +31,8 @@ generate_report <- function(species, assembly, filenames, summary_table, results
   myparams <- list(
     info=info,
     summary_table=summary_table,
-    regions=regions
+    regions=regions,
+    frequencies=frequencies
   )
   rmarkdown::render("data/report_template.Rmd", params=myparams, output_format="pdf_document", output_file=outfile, intermediates_dir=tempdir())
 }

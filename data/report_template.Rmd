@@ -6,6 +6,7 @@ params:
   info: list()
   summary_table: data.frame()
   regions: data.frame()
+  frequencies: data.frame()
 ---
 
 ```{r setup, include=FALSE}
@@ -27,5 +28,11 @@ knitr::kable(params$summary_table, row.names=FALSE)
 # Results
 
 ```{r echo=FALSE}
-knitr::kable(params$regions, row.names=FALSE)
+knitr::kable(params$regions, row.names=TRUE)
+```
+
+# Variation frequencies
+
+```{r echo=FALSE}
+knitr::kable(params$frequencies, row.names=TRUE)
 ```
