@@ -149,7 +149,7 @@ shinyServer(function(input, output) {
           name1=group.names[1], name2=group.names[2],
           merge=input$merge, merge.threshold=input$mergeThreshold,
           p.cutoff=input$pvalueCutoff,
-          qvalues=input$computeQvalues, qvalues.rep=2000
+          qvalues=input$computeQvalues
         )
       }
       else if(input$modelTabs == "query") {
@@ -160,7 +160,7 @@ shinyServer(function(input, output) {
           name1=group.names[1], name2=group.names[2],
           merge=input$merge, merge.threshold=input$mergeThreshold,
           pred1=pred1, pred2=pred2,
-          qvalues=input$computeQvalues, qvalues.rep=2000
+          qvalues=input$computeQvalues
         )
       }
       setProgress(value=0.9, detail="Preparing output")
