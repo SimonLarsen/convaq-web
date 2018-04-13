@@ -9,7 +9,8 @@ types <- tolower(c("Gain","Loss","LOH"))
 species <- c(
   "Homo sapiens" = "human",
   "Mus musculus" = "mouse",
-  "Rattus norvegicus" = "rat"
+  "Rattus norvegicus" = "rat",
+  "Other" = "other"
 )
 
 assemblies <- list(
@@ -24,5 +25,6 @@ assemblies <- list(
   ),
   rat = c(
     "Jul. 2014 (RGSC 6.0/rn6)" = "rn6"
-  )
+  ),
+  other = c("None" = "None")
 )

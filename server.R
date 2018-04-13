@@ -211,8 +211,12 @@ shinyServer(function(input, output) {
           renderDT(datatable(states2, rownames=FALSE, options=list(scrollY="200px", searching=FALSE, paging=FALSE)), server=FALSE)
         )
       ),
-      h4("Genome browser"),
-      a(href=ucsc_link, target="_blank", class="btn btn-primary", "Show region in UCSC Genome Browser")
+      if(currentSpecies() != "other") {
+        tagList(
+          h4("Genome browser"),
+          a(href=ucsc_link, target="_blank", class="btn btn-primary", "Show region in UCSC Genome Browser")
+        )
+      }
     )
   }
     
@@ -287,6 +291,10 @@ shinyServer(function(input, output) {
   observeEvent(input$analyzeRegionsButton, {
     if(!isTruthy(input$resultsTable_rows_selected)) {
       alert("Please select at least one row for analysis.")
+      return()
+    }
+    if(currentSpecies() == "other") {
+      alert("Cannot perform analysis with unknown species.")
       return()
     }
     currentEnrichmentResults(NULL)
