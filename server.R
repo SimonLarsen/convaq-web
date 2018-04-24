@@ -82,8 +82,15 @@ shinyServer(function(input, output) {
     }
     
     # read segment files and set column names
-    s1 <- read_data(input$file1$datapath)
-    s2 <- read_data(input$file2$datapath)
+    s1 <- tryCatch(
+      read_data(input$file1$datapath),
+      error = function(e) { alert(paste0("File 1 is malformed: ", e$message)); return(NULL) }
+    )
+    s2 <- tryCatch(
+      read_data(input$file2$datapath),
+      error = function(e) { alert(paste0("File 2 is malformed: ", e$message)); return(NULL) }
+    )
+    if(is.null(s1) || is.null(s2)) return()
     if(ncol(s1) < 5) { alert("File 1 does not have 5 columns."); return() }
     if(ncol(s2) < 5) { alert("File 2 does not have 5 columns."); return() }
     colnames(s1) <- c("patient","chr","start","end","type")
