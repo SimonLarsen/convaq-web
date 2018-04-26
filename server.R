@@ -186,6 +186,10 @@ shinyServer(function(input, output) {
     
     ucsc_link <- sprintf("https://genome.ucsc.edu/cgi-bin/hgTracks?position=%s:%d-%d&db=%s", chr, start, end, currentAssembly())
     
+    summary_table <- regions(results)[row,]
+    if(!is.null(summary_table$pvalue)) summary_table$pvalue <- formatC(summary_table$pvalue)
+    if(!is.null(summary_table$qvalue)) summary_table$qvalue <- formatC(summary_table$qvalue)
+    
     freq <- frequencies(results)[row,]
     freq <- rbind(
       setNames(freq[,1:3], types.pretty),
@@ -205,7 +209,7 @@ shinyServer(function(input, output) {
       footer = modalButton("Close"),
       
       h4("Summary"),
-      renderTable(results$regions[row,], rownames=FALSE, colnames=TRUE),
+      renderTable(summary_table, rownames=FALSE, colnames=TRUE),
       renderTable(freq, rownames=TRUE, colnames=TRUE),
       h4("Patient/sample states"),
       fluidRow(
