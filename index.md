@@ -44,6 +44,4 @@ Package documentation:
 
 If you use CoNVaQ in your research, we kindly ask you to cite the following publication:
 
-```
-Citation details to be announced.
-```
+> Larsen SJ, do Canto LM, Rogatto SR, Baumbach J (2018). CoNVaQ: a web tool for copy number variation-based association studies. BMC Genomics. (In press)
