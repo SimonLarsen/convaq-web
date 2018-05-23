@@ -1,1 +1,1 @@
-devtools::install_github('SimonLarsen/convaq')
+devtools::install_github('SimonLarsen/convaq@*release')
